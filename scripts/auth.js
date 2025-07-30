@@ -1,17 +1,10 @@
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { app } from "./firebase-init.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
-const auth = getAuth(app);
-const adminUID = "zFyUd81jkaevJ3NLXFbvV0heRop2";
+const ADMIN_UID = "zFyUd81jkaevJ3NLXFbvV0heRop2";
 
+const auth = getAuth();
 onAuthStateChanged(auth, (user) => {
-  if (!user || user.uid !== adminUID) {
+  if (!user || user.uid !== ADMIN_UID) {
     window.location.href = "/admin/login.html";
   }
 });
-
-window.logout = () => {
-  signOut(auth).then(() => {
-    window.location.href = "/admin/login.html";
-  });
-};

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whisprly Admin - Reports</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <h1>User Reports</h1>
+    <table id="reportsTable">
+      <thead>
+        <tr>
+          <th>Reporter ID</th>
+          <th>Reported ID</th>
+          <th>Type</th>
+          <th>Post ID</th>
+          <th>Reason</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Timestamp</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script type="module" src="../scripts/firebase-init.js"></script>
+  <script type="module" src="../scripts/reports.js"></script>
+</body>
+</html>

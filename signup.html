@@ -3,61 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Whisprly - Signup</title>
-  <link rel="stylesheet" href="/styles/main.css" />
-  <link rel="stylesheet" href="/styles/auth.css" />
-  <link rel="icon" href="logo.png" type="image/png" />
+  <title>Whisprly — Signup</title>
+  <link rel="stylesheet" href="styles/auth.css" />
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
-<body class="dark-bg">
-  <header class="auth-header">
-    <img src="logo.png" alt="Whisprly Logo" class="logo" />
-    <h1 class="title">Whisprly</h1>
-  </header>
+<body>
+  <div class="auth-container">
+    <img src="assets/logo.png" alt="Whisprly Logo" class="auth-logo" />
 
-  <main class="auth-container">
-    <form id="signup-form" class="auth-form">
-      <h2>Create Your Account</h2>
+    <h2>Create Account</h2>
+    <form id="signup-form">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="date" id="dob" required />
 
-      <div class="form-group">
-        <label for="profilePic">Profile Picture</label>
-        <input type="file" id="profilePic" accept="image/*" required />
+      <div class="upload-section">
+        <button type="button" id="upload_widget">Upload Profile Picture</button>
+        <p id="upload-status">No image uploaded</p>
+        <input type="hidden" id="profile-pic-url" />
       </div>
 
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" required />
-      </div>
-
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" required />
-      </div>
-
-      <div class="form-group">
-        <label for="dob">Date of Birth</label>
-        <input type="date" id="dob" required />
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" required />
-      </div>
-
-      <button type="submit" class="btn">Sign Up</button>
-
-      <div class="auth-links">
-        <a href="/login.html">Already have an account? Login</a>
-      </div>
+      <button type="submit">Create Profile</button>
+      <p id="signup-error" class="error-msg"></p>
     </form>
-  </main>
 
-  <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-  <script src="/scripts/firebase-init.js"></script>
-  <script type="module" src="/scripts/signup.js"></script>
+    <p>Already have an account? <a href="login.html">Log in</a></p>
+  </div>
+
+  <script type="module">
+    import { signupUser, initCloudinaryWidget } from './scripts/auth.js';
+
+    initCloudinaryWidget();
+
+    const form = document.getElementById('signup-form');
+    const errorEl = document.getElementById('signup-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.textContent = '';
+
+      const name = document.getElementById('name').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const dob = document.getElementById('dob').value;
+      const profilePic = document.getElementById('profile-pic-url').value;
+
+      if (!profilePic) {
+        errorEl.textContent = "Please upload a profile picture.";
+        return;
+      }
+
+      try {
+        await signupUser({ name, username, email, password, dob, profilePic });
+        window.location.href = 'home.html';
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = err.message || "Signup failed. Please try again.";
+      }
+    });
+  </script>
 </body>
 </html>

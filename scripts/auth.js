@@ -1,69 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Whisprly — Signup</title>
-  <link rel="stylesheet" href="styles/auth.css" />
-  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-</head>
-<body>
-  <div class="auth-container">
-    <img src="assets/logo.png" alt="Whisprly Logo" class="auth-logo" />
+import { auth, db } from './firebase-init.js';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <h2>Create Account</h2>
-    <form id="signup-form">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <input type="date" id="dob" required />
+// Save UID in session
+const storeSession = (uid) => sessionStorage.setItem('uid', uid);
+const getSessionUID = () => sessionStorage.getItem('uid');
 
-      <div class="upload-section">
-        <button type="button" id="upload_widget">Upload Profile Picture</button>
-        <p id="upload-status">No image uploaded</p>
-        <input type="hidden" id="profile-pic-url" />
-      </div>
+// ==================
+// LOGIN
+// ==================
+export async function loginUser(email, password) {
+  const userCred = await signInWithEmailAndPassword(auth, email, password);
+  storeSession(userCred.user.uid);
 
-      <button type="submit">Create Profile</button>
-      <p id="signup-error" class="error-msg"></p>
-    </form>
+  // Check Firestore doc exists
+  const docRef = doc(db, 'users', userCred.user.uid);
+  const snap = await getDoc(docRef);
+  if (!snap.exists()) {
+    throw new Error("User document not found.");
+  }
+  return userCred.user;
+}
 
-    <p>Already have an account? <a href="login.html">Log in</a></p>
-  </div>
+// ==================
+// SIGNUP (with Cloudinary Image URL)
+// ==================
+export async function signupUser({ email, password, name, username, dob, profilePic }) {
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
+  const uid = userCred.user.uid;
 
-  <script type="module">
-    import { signupUser, initCloudinaryWidget } from './scripts/auth.js';
+  const userDoc = {
+    uid,
+    email,
+    name,
+    username,
+    dob,
+    bio: "",
+    profilePic,
+    createdAt: serverTimestamp(),
+    followers: [],
+    following: [],
+    posts: [],
+  };
 
-    initCloudinaryWidget();
+  await setDoc(doc(db, "users", uid), userDoc);
+  storeSession(uid);
+  return uid;
+}
 
-    const form = document.getElementById('signup-form');
-    const errorEl = document.getElementById('signup-error');
+// ==================
+// LOGOUT
+// ==================
+export function logoutUser() {
+  sessionStorage.clear();
+  return signOut(auth);
+}
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.textContent = '';
+// ==================
+// AUTH STATE CHECK
+// ==================
+export function checkAuthState(callback) {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      storeSession(user.uid);
+      callback(true, user.uid);
+    } else {
+      callback(false, null);
+    }
+  });
+}
 
-      const name = document.getElementById('name').value.trim();
-      const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const dob = document.getElementById('dob').value;
-      const profilePic = document.getElementById('profile-pic-url').value;
+// ==================
+// CLOUDINARY UPLOAD HANDLER
+// ==================
+export function initCloudinaryWidget() {
+  const uploadBtn = document.getElementById("upload_widget");
+  const picUrlInput = document.getElementById("profile-pic-url");
+  const uploadStatus = document.getElementById("upload-status");
 
-      if (!profilePic) {
-        errorEl.textContent = "Please upload a profile picture.";
-        return;
+  if (!uploadBtn || !picUrlInput || !uploadStatus) return;
+
+  let uploadedImageUrl = "";
+
+  uploadBtn.addEventListener("click", function () {
+    cloudinary.openUploadWidget(
+      {
+        cloudName: "dmfnzqs0q",       // 🔁 Replace with your Cloudinary cloud name
+        uploadPreset: "whisprly",        // 🔁 Replace with your unsigned preset
+        multiple: false,
+        cropping: true,
+        sources: ["local", "url", "camera"],
+        folder: "whisprly_profiles",
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          uploadedImageUrl = result.info.secure_url;
+          picUrlInput.value = uploadedImageUrl;
+          uploadStatus.textContent = "✅ Image uploaded successfully!";
+        } else if (error) {
+          console.error("Upload failed:", error);
+          uploadStatus.textContent = "❌ Upload failed. Try again.";
+        }
       }
-
-      try {
-        await signupUser({ name, username, email, password, dob, profilePic });
-        window.location.href = 'home.html';
-      } catch (err) {
-        console.error(err);
-        errorEl.textContent = err.message || "Signup failed. Please try again.";
-      }
-    });
-  </script>
-</body>
-</html>
+    );
+  });
+}

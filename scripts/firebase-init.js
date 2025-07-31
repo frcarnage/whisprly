@@ -1,12 +1,8 @@
-// scripts/firebase-init.js
-
-// Import Firebase modules
+// firebase-init.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
   authDomain: "whisprly-5415a.firebaseapp.com",
@@ -18,10 +14,39 @@ const firebaseConfig = {
   measurementId: "G-2CXWX5ZWH5"
 };
 
-// Initialize Firebase app
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Export Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+// Helper: Check if admin is logged in
+function checkAdmin(callback) {
+  onAuthStateChanged(auth, (user) => {
+    if (user?.uid === "zFyUd81jkaevJ3NLXFbvV0heRop2") {
+      callback(user);
+    } else {
+      window.location.href = "/admin/login";
+    }
+  });
+}
+
+// Helper: Sign out
+function logout() {
+  signOut(auth).then(() => {
+    window.location.href = "/admin/login";
+  });
+}
+
+// Export for use in admin panel
+export {
+  app,
+  auth,
+  db,
+  checkAdmin,
+  logout,
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc
+};

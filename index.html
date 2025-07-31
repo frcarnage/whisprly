@@ -3,48 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Whisprly - Anonymous Social Voice</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/png" href="assets/logo.png" />
-  <meta name="description" content="Whisprly – Speak freely, connect anonymously. Join the next-gen social platform that puts your voice first." />
-  <meta name="keywords" content="Whisprly, anonymous, social media, free speech, chat, posts, connect" />
-  <meta name="author" content="Whisprly Team" />
+  <title>Whisprly</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0F0418;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+    }
+
+    .auth-buttons a {
+      margin-left: 15px;
+      text-decoration: none;
+      color: white;
+      padding: 10px 18px;
+      border: 1px solid white;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .auth-buttons a:hover {
+      background-color: white;
+      color: #0F0418;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .heading {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .subheading {
+      font-size: 1.1rem;
+      color: #ccc;
+      max-width: 500px;
+    }
+
+    .coming-soon {
+      margin-top: 30px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .socials {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .socials a {
+      color: #ccc;
+      margin: 0 10px;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .socials a:hover {
+      color: white;
+    }
+
+    footer {
+      padding: 30px 20px;
+      font-size: 0.9rem;
+      background-color: #0B0313;
+      text-align: center;
+    }
+
+    .legal-links {
+      margin-top: 20px;
+    }
+
+    .legal-links a {
+      color: #aaa;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.85rem;
+    }
+
+    .legal-links a:hover {
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .heading {
+        font-size: 1.6rem;
+      }
+
+      .auth-buttons a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+
+      .legal-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .legal-links a {
+        margin: 5px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="main-header">
-    <img src="ashtml/logo.png" alt="Whisprly Logo" class="logo" />
-    <h1>Whisprly</h1>
-    <p class="tagline">Your voice. Your space. Anonymous and free.</p>
+
+  <header>
+    <img src="logo.png" alt="Whisprly Logo" class="logo" />
+    <div class="auth-buttons">
+      <a href="login.html">Login</a>
+      <a href="signup.html">Sign Up</a>
+    </div>
   </header>
 
-  <main class="main-content">
-    <section class="auth-options">
-      <a href="/login.html" class="btn primary-btn">Login</a>
-      <a href="/signup.html" class="btn secondary-btn">Create Account</a>
-    </section>
+  <main>
+    <h1 class="heading">Welcome to Whisprly</h1>
+    <p class="subheading">
+      Speak freely. Connect authentically. A modern and anonymous social space that’s bold, fast, and secure.
+    </p>
 
-    <section class="features">
-      <h2>Why Whisprly?</h2>
-      <ul>
-        <li>🔒 Speak anonymously without judgment</li>
-        <li>📣 Share posts and connect with others</li>
-        <li>🛡️ Report abuse and stay protected</li>
-        <li>🌐 Coming soon to mobile & web</li>
-      </ul>
-    </section>
+    <div class="coming-soon">
+      📱 Our app is launching soon on Android & iOS. Stay tuned!
+    </div>
 
-    <section class="coming-soon">
-      <h3>Android App Coming Soon</h3>
-      <p>We’re almost ready! Stay tuned or check back later to download the APK.</p>
-    </section>
+    <div class="socials">
+      <p>Follow us on:</p>
+      <a href="https://instagram.com/whisprly.app" target="_blank">Instagram</a>
+      <a href="https://chat.whatsapp.com/yourchannel" target="_blank">WhatsApp Channel</a>
+    </div>
   </main>
 
-  <footer class="footer">
-    <a href="/privacy.html">Privacy</a> |
-    <a href="/tos.html">Terms</a> |
-    <a href="/guidelines.html">Community Guidelines</a> |
-    <a href="/licenses.html">Licenses</a>
-    <p>&copy; 2025 Whisprly. All rights reserved.</p>
+  <footer>
+    © 2025 Whisprly. All rights reserved.
+
+    <div class="legal-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="tos.html">Terms of Service</a>
+      <a href="licenses.html">Licenses</a>
+      <a href="guidelines.html">Community Guidelines</a>
+    </div>
   </footer>
+
 </body>
 </html>

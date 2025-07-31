@@ -1,51 +1,60 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
-import { firebaseConfig } from "./firebase-init.js";
+import {
+  db,
+  checkAdmin,
+  collection,
+  getDocs,
+  doc,
+  updateDoc
+} from "../firebase/firebase-init.js";
 
-// Init Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const tableBody = document.getElementById("reports-table-body");
 
-// Fetch & Display Reports
-async function loadReports() {
-  const tableBody = document.querySelector("#reportsTable tbody");
-  tableBody.innerHTML = "";
+checkAdmin(async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "reports"));
 
-  const reportsRef = collection(db, "reports");
-  const snapshot = await getDocs(reportsRef);
+    querySnapshot.forEach((docSnap) => {
+      const report = docSnap.data();
+      const id = docSnap.id;
 
-  const reports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  reports.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+      const row = document.createElement("tr");
 
-  for (const report of reports) {
-    const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${report.type}</td>
+        <td>${report.reportedUserId || "-"}</td>
+        <td>${report.postId || "-"}</td>
+        <td>${report.reason}</td>
+        <td>${report.description}</td>
+        <td>${report.reporterId}</td>
+        <td>${report.status}</td>
+        <td>
+          <select data-id="${id}" class="status-selector">
+            <option value="pending" ${report.status === "pending" ? "selected" : ""}>Pending</option>
+            <option value="reviewed" ${report.status === "reviewed" ? "selected" : ""}>Reviewed</option>
+            <option value="actioned" ${report.status === "actioned" ? "selected" : ""}>Actioned</option>
+          </select>
+        </td>
+      `;
 
-    row.innerHTML = `
-      <td>${report.reporterId}</td>
-      <td>${report.reportedUserId}</td>
-      <td>${report.type}</td>
-      <td>${report.type === "post" ? report.postId : "-"}</td>
-      <td>${report.reason}</td>
-      <td>${report.description}</td>
-      <td>${report.status}</td>
-      <td>${report.timestamp?.toDate ? report.timestamp.toDate().toLocaleString() : "-"}</td>
-      <td>
-        <button onclick="updateStatus('${report.id}', 'resolved')">✅</button>
-        <button onclick="updateStatus('${report.id}', 'rejected')">❌</button>
-      </td>
-    `;
+      tableBody.appendChild(row);
+    });
 
-    tableBody.appendChild(row);
+    // Handle status changes
+    document.querySelectorAll(".status-selector").forEach((selector) => {
+      selector.addEventListener("change", async (e) => {
+        const id = e.target.getAttribute("data-id");
+        const newStatus = e.target.value;
+
+        await updateDoc(doc(db, "reports", id), {
+          status: newStatus,
+        });
+
+        alert(`Report ${id} status updated to ${newStatus}`);
+      });
+    });
+
+  } catch (err) {
+    console.error("Error loading reports:", err);
+    tableBody.innerHTML = `<tr><td colspan="8">Failed to load reports.</td></tr>`;
   }
-}
-
-// Update Report Status
-window.updateStatus = async (reportId, newStatus) => {
-  const reportDoc = doc(db, "reports", reportId);
-  await updateDoc(reportDoc, { status: newStatus });
-  alert(`Report marked as ${newStatus}`);
-  loadReports();
-};
-
-// Load reports on page load
-loadReports();
+});

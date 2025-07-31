@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whisprly Admin • Posts</title>
+  <link rel="stylesheet" href="../styles/admin.css"/>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <script src="../scripts/firebase-init.js" defer></script>
+  <script src="../scripts/auth.js" defer></script>
+  <script src="../scripts/posts.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Manage Posts</h1>
+    <a href="dashboard.html">← Back to Dashboard</a>
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Post ID</th>
+          <th>Author</th>
+          <th>Content</th>
+          <th>Image</th>
+          <th>Created</th>
+          <th>Likes</th>
+          <th>Comments</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="posts-table-body">
+        <!-- Populated by posts.js -->
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

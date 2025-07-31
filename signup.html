@@ -3,22 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Account | Whisprly</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script defer src="scripts/firebase-init.js"></script>
-  <script defer src="scripts/signup.js"></script>
+  <title>Whisprly - Sign Up</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/auth.css" />
+  <link rel="stylesheet" href="styles/form.css" />
 </head>
-<body>
+<body style="background-color: #0F0418; color: white;">
+
   <div class="auth-container">
-    <img src="assets/logo.png" class="logo" alt="Whisprly Logo" />
+    <img src="logo.png" alt="Whisprly Logo" class="logo" />
     <h2>Create your Whisprly account</h2>
-    <form id="signupForm">
+
+    <form id="signupForm" class="form">
+      <!-- Profile Pic Upload -->
+      <label class="profile-pic-label">
+        <span>Profile Picture</span>
+        <input type="file" accept="image/*" id="profilePicInput" />
+        <img id="profilePicPreview" src="assets/icons/default-profile.png" alt="Preview" class="profile-pic-preview" />
+      </label>
+
       <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="date" id="dob" required />
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Sign Up</button>
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+
+      <button type="submit" class="btn">Sign Up</button>
     </form>
-    <p class="link-text">Already have an account? <a href="login.html">Login</a></p>
+
+    <p class="switch-link">Already have an account?
+      <a href="login.html">Login</a>
+    </p>
   </div>
+
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/firebase-init.js"></script>
+  <script src="scripts/cloudinary.js"></script>
+  <script src="scripts/auth.js"></script>
 </body>
 </html>

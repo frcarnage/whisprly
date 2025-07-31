@@ -5,6 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Whisprly Admin Login</title>
   <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0F0418;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .login-container {
+      background-color: #1A0D2E;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      background-color: #8645FF;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #6d2dd6;
+    }
+
+    .error-text {
+      color: #ff6b6b;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
   <div class="login-container">
@@ -23,13 +82,34 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
-  <!-- Config & Login -->
+  <!-- Firebase Config & Login Logic -->
   <script type="module">
-    import { firebaseConfig } from "/scripts/firebase-init.js";
-    import { handleAdminLogin } from "/scripts/login.js";
+    import { firebaseConfig } from '/scripts/firebase-init.js';
 
     firebase.initializeApp(firebaseConfig);
-    document.getElementById('login-form').addEventListener('submit', handleAdminLogin);
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+
+      try {
+        const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = result.user;
+
+        if (user.uid === 'zFyUd81jkaevJ3NLXFbvV0heRop2') {
+          localStorage.setItem('admin', 'true');
+          window.location.href = '/admin-pannel/dashboard.html';
+        } else {
+          errorMsg.textContent = 'Access denied: Not an admin.';
+          await firebase.auth().signOut();
+        }
+      } catch (err) {
+        errorMsg.textContent = err.message;
+      }
+    });
   </script>
 </body>
 </html>

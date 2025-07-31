@@ -1,25 +1,34 @@
-// /scripts/login.js
+import { auth, db } from './firebase-init.js';
+import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-export async function handleAdminLogin(e) {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const errorMsg = document.getElementById('error-msg');
+  const password = document.getElementById('password').value;
 
   try {
-    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Check for specific admin UID
-    if (user.uid === 'zFyUd81jkaevJ3NLXFbvV0heRop2') {
-      sessionStorage.setItem('adminUID', user.uid);
-      window.location.href = '/admin-pannel/dashboard.html';
-    } else {
-      firebase.auth().signOut();
-      errorMsg.textContent = 'Access denied. You are not the admin.';
+    const userRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(userRef);
+
+    if (!docSnap.exists()) {
+      // Create the user document if it doesn't exist
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: user.email,
+        name: "", // Can be updated later
+        bio: "",
+        profilePicUrl: "",
+        createdAt: new Date().toISOString(),
+      });
     }
-  } catch (err) {
-    errorMsg.textContent = 'Invalid credentials. Please try again.';
-    console.error(err.message);
+
+    window.location.href = "/home.html"; // Redirect to main feed/dashboard
+  } catch (error) {
+    alert(`Login failed: ${error.message}`);
   }
-}
+});

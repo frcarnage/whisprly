@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Whisprly</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="scripts/firebase-init.js"></script>
+  <script defer src="scripts/login.js"></script>
+</head>
+<body>
+  <div class="auth-container">
+    <img src="assets/logo.png" class="logo" alt="Whisprly Logo" />
+    <h2>Login to Whisprly</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <p class="link-text">Don't have an account? <a href="signup.html">Create one</a></p>
+  </div>
+</body>
+</html>

@@ -1,26 +1,24 @@
-<!-- chat.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Whisprly | Chats</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/firebase-init.js" type="module"></script>
-  <script src="js/route-guard.js" type="module"></script>
-  <script src="js/chat.js" type="module"></script>
-  <script src="js/nav.js" type="module"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chats | Whisprly</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="chat.js" defer></script>
 </head>
 <body>
-  <div id="nav"></div>
+  <header>
+    <h2 style="margin: 0.5rem 1rem;">Chats</h2>
+    <input type="text" id="searchInput" placeholder="Search followers..." style="margin: 0.5rem 1rem; padding: 0.4rem; width: calc(100% - 2rem);">
+  </header>
 
-  <main>
-    <h2>Chats</h2>
-    <div id="chatList" class="chat-list"></div>
-  </main>
+  <main id="chatList" style="padding: 1rem;"></main>
 
-  <script type="module">
-    import { loadChats } from './scripts/chat.js';
-    loadChats();
-  </script>
+  <footer style="position: fixed; bottom: 0; left: 0; right: 0; height: 50px; background: #f0f0f0; display: flex; justify-content: space-around; align-items: center;">
+    <a href="home.html">Home</a>
+    <a href="chat.html" style="font-weight: bold;">Chats</a>
+    <a href="profile.html">Profile</a>
+  </footer>
 </body>
 </html>

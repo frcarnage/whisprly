@@ -3,34 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Profile</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <title>User Profile | Whisprly</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="profile-container">
-    <img id="profile-pic" class="avatar" src="" alt="Profile Picture" />
-    <h2 id="username">@username</h2>
-    <h3 id="fullname">Full Name</h3>
-    <img id="verified-icon" src="/assets/verified.png" alt="Verified" style="display:none; width:16px;" />
-
-    <div id="follower-following">
-      <span><strong id="followers-count">0</strong> Followers</span> |
-      <span><strong id="following-count">0</strong> Following</span>
-    </div>
-
-    <div id="actions">
-      <button id="follow-btn">Follow</button>
-      <button id="message-btn">Message</button>
-      <button id="more-btn">⋮</button>
-    </div>
-
-    <div id="user-posts">
-      <h3>Posts</h3>
-      <div id="posts-container"></div>
-    </div>
+  <div class="profile-container" style="max-width: 600px; margin: auto; padding: 2rem;">
+    <div id="userHeader" class="profile-header" style="text-align: center; margin-bottom: 2rem;"></div>
+    <div id="userStats" class="profile-stats" style="display: flex; justify-content: space-around; margin-bottom: 1.5rem;"></div>
+    <div id="userBio" style="text-align: center; margin-bottom: 2rem;"></div>
+    <div id="actionButtons" style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;"></div>
+    <h3 style="text-align: center;">Posts</h3>
+    <div id="userPosts" style="display: flex; flex-direction: column; gap: 1.5rem;"></div>
   </div>
 
-  <script src="/firebase-init.js" type="module"></script>
-  <script src="/users-profile.js" type="module"></script>
+  <script type="module" src="./scripts/users-profile.js"></script>
 </body>
 </html>

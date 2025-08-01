@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search - Whisprly</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="scripts/search.js" defer></script>
+</head>
+<body>
+  <header>
+    <h2>🔍 Search</h2>
+  </header>
+
+  <main>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search by username..."
+      class="search-box"
+    />
+
+    <div id="searchResults" class="search-results">
+      <!-- Matching users will be shown here -->
+    </div>
+  </main>
+
+  <footer>
+    <nav>
+      <a href="home.html">🏠</a>
+      <a href="search.html" class="active">🔍</a>
+      <a href="chat.html">💬</a>
+      <a href="notifications.html">🔔</a>
+      <a href="profile.html">👤</a>
+    </nav>
+  </footer>
+</body>
+</html>

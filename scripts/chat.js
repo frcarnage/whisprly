@@ -1,99 +1,97 @@
-// js/chat.js
 import { db, auth } from './firebase-init.js';
 import {
   collection,
-  doc,
-  getDoc,
-  getDocs,
   query,
   where,
-  orderBy,
-  addDoc,
-  serverTimestamp,
-  onSnapshot,
+  getDocs,
+  doc,
+  getDoc,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-let currentUser;
+const chatList = document.getElementById("chatList");
+const searchInput = document.getElementById("searchInput");
 
-auth.onAuthStateChanged(user => {
-  if (user) currentUser = user;
+let currentUser = null;
+let followers = [];
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    await loadFollowers();
+    renderChatList();
+  } else {
+    window.location.href = "/login.html";
+  }
 });
 
-// Load all chats for current user
-export async function loadChats() {
-  if (!currentUser) return;
-
-  const chatListEl = document.getElementById('chatList');
-  chatListEl.innerHTML = '';
-
-  const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.uid));
-  const snapshot = await getDocs(q);
-
-  snapshot.forEach(async docSnap => {
-    const chatData = docSnap.data();
-    const otherUID = chatData.participants.find(uid => uid !== currentUser.uid);
-    const userSnap = await getDoc(doc(db, 'users', otherUID));
-    const otherUser = userSnap.data();
-
-    const chatItem = document.createElement('div');
-    chatItem.classList.add('chat-item');
-    chatItem.innerHTML = `
-      <img src="${otherUser.profilePic}" class="avatar">
-      <div class="chat-info">
-        <strong>${otherUser.username}</strong>
-        <span>Tap to open chat</span>
-      </div>
-    `;
-    chatItem.addEventListener('click', () => {
-      window.location.href = `chat-detail.html?chatId=${docSnap.id}`;
-    });
-
-    chatListEl.appendChild(chatItem);
-  });
-}
-
-// Load chat messages in chat-detail.html
-export function loadChatDetail(chatId) {
-  const messagesRef = collection(db, 'chats', chatId, 'messages');
-  const q = query(messagesRef, orderBy('timestamp', 'asc'));
-
-  const chatMessages = document.getElementById('chatMessages');
-  chatMessages.innerHTML = '';
-
-  onSnapshot(q, async (snapshot) => {
-    chatMessages.innerHTML = '';
-
-    for (const docSnap of snapshot.docs) {
-      const msg = docSnap.data();
-      const isMine = msg.senderId === currentUser.uid;
-
-      const msgEl = document.createElement('div');
-      msgEl.classList.add('chat-msg', isMine ? 'sent' : 'received');
-      msgEl.textContent = msg.text;
-      chatMessages.appendChild(msgEl);
+// 🔹 Load user's followers to show who they can chat with
+async function loadFollowers() {
+  try {
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    if (userDoc.exists()) {
+      followers = userDoc.data().following || []; // You can also use .followers if you prefer
     }
-
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
-
-  // Load chat user name
-  getDoc(doc(db, 'chats', chatId)).then(chatSnap => {
-    const chatData = chatSnap.data();
-    const otherUID = chatData.participants.find(uid => uid !== currentUser.uid);
-    getDoc(doc(db, 'users', otherUID)).then(userSnap => {
-      document.getElementById('chatUserName').textContent = userSnap.data().username;
-    });
-  });
+  } catch (err) {
+    console.error("Error loading followers:", err);
+  }
 }
 
-// Send message
-export async function sendMessage(chatId, text) {
-  const message = {
-    text,
-    senderId: currentUser.uid,
-    timestamp: serverTimestamp(),
-  };
+// 🔹 Load and render chat list (followers only)
+async function renderChatList() {
+  chatList.innerHTML = "";
 
-  await addDoc(collection(db, 'chats', chatId, 'messages'), message);
-  document.getElementById('messageInput').value = '';
+  if (followers.length === 0) {
+    chatList.innerHTML = "<p style='text-align:center;'>You are not following anyone yet.</p>";
+    return;
+  }
+
+  for (const uid of followers) {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+      const user = userDoc.data();
+      const userItem = document.createElement("div");
+
+      userItem.className = "chat-item";
+      userItem.style = `
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+      `;
+
+      userItem.innerHTML = `
+        <img src="${user.profilePic || 'https://via.placeholder.com/40'}"
+             alt="Profile"
+             style="width: 45px; height: 45px; border-radius: 50%;" />
+
+        <div style="flex-grow: 1;">
+          <div style="font-weight: bold;">${user.username || "User"}</div>
+          <div style="font-size: 0.9rem; color: gray;">Tap to chat</div>
+        </div>
+      `;
+
+      userItem.onclick = () => {
+        window.location.href = `chat-detail.html?uid=${uid}`;
+      };
+
+      chatList.appendChild(userItem);
+    }
+  }
 }
+
+// 🔍 Live search from followers
+searchInput.addEventListener("input", () => {
+  const searchValue = searchInput.value.toLowerCase();
+  const items = document.querySelectorAll(".chat-item");
+
+  items.forEach(item => {
+    const name = item.querySelector("div").textContent.toLowerCase();
+    item.style.display = name.includes(searchValue) ? "flex" : "none";
+  });
+});

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile - Whisprly</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="profileSection"></div>
+  <div id="actionButtons" style="margin-top: 1rem;"></div>
+  <div id="userPosts" style="margin-top: 2rem;"></div>
+
+  <!-- 3-dot menu -->
+  <div id="threeDotMenu" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; border-radius: 5px; z-index: 999;">
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li onclick="reportUser()" style="padding: 8px; cursor: pointer;">🚩 Report</li>
+      <li onclick="blockUser()" style="padding: 8px; cursor: pointer;">⛔ Block</li>
+    </ul>
+  </div>
+
+  <script type="module" src="users-profile.js"></script>
+</body>
+</html>

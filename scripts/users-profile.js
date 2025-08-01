@@ -1,192 +1,67 @@
-import { auth, db } from './firebase-init.js';
+import { db, auth } from "./firebase-init.js";
 import {
   doc,
   getDoc,
   collection,
   query,
   where,
-  getDocs,
-  setDoc,
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-  arrayUnion
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Parse UID from URL
+// Get user ID from query param
 const urlParams = new URLSearchParams(window.location.search);
-const profileUid = urlParams.get('uid');
+const userId = urlParams.get("uid");
 
-if (!profileUid) {
-  alert("User not found.");
-  window.location.href = "home.html";
+if (!userId) {
+  alert("User not found!");
 }
 
-const usernameEl = document.getElementById('username');
-const profilePicEl = document.getElementById('profilePic');
-const bioEl = document.getElementById('bio');
-const followBtn = document.getElementById('followBtn');
-const messageBtn = document.getElementById('messageBtn');
-const userPostsEl = document.getElementById('userPosts');
-const optionsBtn = document.getElementById('optionsBtn');
-const optionsMenu = document.getElementById('optionsMenu');
-const reportBtn = document.getElementById('reportBtn');
-const blockBtn = document.getElementById('blockBtn');
-const verifiedBadge = document.getElementById('verifiedBadge');
+// Fetch user data
+const userRef = doc(db, "users", userId);
+const userSnap = await getDoc(userRef);
 
-let currentUser = null;
+if (userSnap.exists()) {
+  const userData = userSnap.data();
+  document.getElementById("profile-pic").src = userData.profilePic || "/assets/avatar.png";
+  document.getElementById("username").textContent = "@" + userData.username;
+  document.getElementById("fullname").textContent = userData.fullName || "Unknown";
+  document.getElementById("followers-count").textContent = userData.followers?.length || 0;
+  document.getElementById("following-count").textContent = userData.following?.length || 0;
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Please login first.");
-    window.location.href = "/login.html";
-    return;
+  if (userData.isVerified) {
+    document.getElementById("verified-icon").style.display = "inline-block";
   }
 
-  currentUser = user;
-
-  if (currentUser.uid === profileUid) {
-    followBtn.style.display = "none";
-    messageBtn.style.display = "none";
-    optionsBtn.style.display = "none";
-  }
-
-  await loadUserProfile();
-  await checkFollowStatus();
-  loadUserPosts();
-});
-
-// Load profile data
-async function loadUserProfile() {
-  const userDoc = await getDoc(doc(db, "users", profileUid));
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    usernameEl.textContent = userData.username || "No Name";
-    profilePicEl.src = userData.profilePic || "./assets/default-avatar.png";
-    bioEl.textContent = userData.bio || "";
-
-    if (userData.isVerified) {
-      verifiedBadge.style.display = "inline";
-    }
-  }
-}
-
-// Follow / Unfollow
-async function checkFollowStatus() {
-  const currentUserDoc = await getDoc(doc(db, "users", currentUser.uid));
-  const currentData = currentUserDoc.data();
-  const isFollowing = currentData.following?.includes(profileUid);
-
-  followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
-
-  followBtn.onclick = async () => {
-    const currentRef = doc(db, "users", currentUser.uid);
-    const targetRef = doc(db, "users", profileUid);
-
-    if (isFollowing) {
-      // Unfollow logic
-      await updateDoc(currentRef, {
-        following: currentData.following.filter(uid => uid !== profileUid)
-      });
-      const targetDoc = await getDoc(targetRef);
-      const targetData = targetDoc.data();
-      await updateDoc(targetRef, {
-        followers: targetData.followers.filter(uid => uid !== currentUser.uid)
-      });
-      followBtn.textContent = "Follow";
-    } else {
-      // Follow logic
-      await updateDoc(currentRef, {
-        following: arrayUnion(profileUid)
-      });
-      await updateDoc(targetRef, {
-        followers: arrayUnion(currentUser.uid)
-      });
-      followBtn.textContent = "Unfollow";
-    }
-  };
-}
-
-// Load user posts
-async function loadUserPosts() {
-  const q = query(
+  // Load user's posts
+  const postsQuery = query(
     collection(db, "posts"),
-    where("uid", "==", profileUid)
+    where("userId", "==", userId)
   );
-  const querySnapshot = await getDocs(q);
-  userPostsEl.innerHTML = "";
 
-  querySnapshot.forEach((doc) => {
+  const postsSnap = await getDocs(postsQuery);
+  const postsContainer = document.getElementById("posts-container");
+  postsSnap.forEach(doc => {
     const post = doc.data();
-    const postEl = document.createElement("img");
-    postEl.src = post.imageUrl;
-    postEl.alt = "Post Image";
-    postEl.style.width = "100%";
-    postEl.style.borderRadius = "10px";
-    userPostsEl.appendChild(postEl);
+    const postElement = document.createElement("div");
+    postElement.innerHTML = `
+      <h4>${post.title}</h4>
+      <p>${post.content}</p>
+    `;
+    postsContainer.appendChild(postElement);
   });
 }
 
-// Message / Create Chat
-messageBtn.addEventListener("click", async () => {
-  const chatsRef = collection(db, "chats");
-  const q = query(chatsRef, where("participants", "array-contains", currentUser.uid));
-  const snapshot = await getDocs(q);
-
-  let existingChat = null;
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.participants.includes(profileUid)) {
-      existingChat = doc.id;
-    }
-  });
-
-  if (existingChat) {
-    window.location.href = `chat.html?chatId=${existingChat}`;
-  } else {
-    const chatDoc = await addDoc(chatsRef, {
-      participants: [currentUser.uid, profileUid],
-      createdAt: serverTimestamp(),
-    });
-    window.location.href = `chat.html?chatId=${chatDoc.id}`;
-  }
+// Buttons
+document.getElementById("follow-btn").addEventListener("click", () => {
+  alert("Follow feature will be added.");
 });
 
-// Options Menu (⋮)
-optionsBtn.onclick = () => {
-  optionsMenu.style.display = optionsMenu.style.display === "block" ? "none" : "block";
-};
-
-window.addEventListener("click", (e) => {
-  if (!optionsBtn.contains(e.target) && !optionsMenu.contains(e.target)) {
-    optionsMenu.style.display = "none";
-  }
+document.getElementById("message-btn").addEventListener("click", () => {
+  window.location.href = `/chat.html?uid=${userId}`;
 });
 
-// Report
-reportBtn.onclick = async () => {
-  const reportRef = collection(db, "reports");
-  await addDoc(reportRef, {
-    type: "user",
-    reporterId: currentUser.uid,
-    reportedId: profileUid,
-    timestamp: serverTimestamp()
-  });
-  alert("User reported.");
-  optionsMenu.style.display = "none";
-};
-
-// Block
-blockBtn.onclick = async () => {
-  const userRef = doc(db, "users", currentUser.uid);
-  const userDoc = await getDoc(userRef);
-  const userData = userDoc.data();
-
-  await updateDoc(userRef, {
-    blocked: arrayUnion(profileUid)
-  });
-
-  alert("User blocked.");
-  optionsMenu.style.display = "none";
-};
+document.getElementById("more-btn").addEventListener("click", () => {
+  const action = prompt("Options:\n1. Report\n2. Block");
+  if (action === "1") alert("Reported!");
+  else if (action === "2") alert("Blocked!");
+});

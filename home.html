@@ -3,35 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Whisprly | Home</title>
-  <link rel="stylesheet" href="home.css" />
-  <script type="module" src="home.js" defer></script>
+  <title>Whisprly - Home</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0F0418;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    header {
+      background-color: #1E0E2F;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-around;
+      background-color: #1E0E2F;
+      padding: 0.8rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .nav-buttons button {
+      background: none;
+      border: none;
+      color: #BB86FC;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      color: white;
+    }
+
+    .post-container {
+      padding: 1rem;
+    }
+
+    .post {
+      background-color: #241132;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.05);
+    }
+
+    .post h3 {
+      margin: 0 0 0.5rem 0;
+    }
+
+    .post p {
+      margin: 0.5rem 0 0 0;
+    }
+
+    .post time {
+      display: block;
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
 <body>
+
   <header>
-    <h1>Whisprly</h1>
-    <nav>
-      <button onclick="location.href='profile.html'">Profile</button>
-      <button onclick="location.href='notifications.html'">🔔</button>
-      <button onclick="location.href='chat.html'">💬</button>
-      <button onclick="location.href='search.html'">🔍</button>
-    </nav>
+    Whisprly 🗣️
   </header>
 
-  <main>
-    <button id="createPostBtn">➕ Create Post</button>
-    <div id="postsContainer"></div>
-  </main>
-
-  <!-- Create Post Modal -->
-  <div id="postModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Create New Post</h2>
-      <textarea id="postContent" placeholder="What's on your mind?" rows="4"></textarea>
-      <input type="file" id="postImage" accept="image/*" />
-      <button id="submitPostBtn">Post</button>
-    </div>
+  <div class="nav-buttons">
+    <button onclick="goTo('search.html')">Search</button>
+    <button onclick="goTo('chat.html')">Chat</button>
+    <button onclick="goTo('notifications.html')">Notifications</button>
+    <button onclick="goTo('profile.html')">Profile</button>
   </div>
+
+  <div class="post-container" id="postContainer">
+    <!-- Posts will be rendered here -->
+  </div>
+
+  <!-- ✅ Load post-fetching script -->
+  <script type="module" src="./scripts/home.js"></script>
 </body>
 </html>

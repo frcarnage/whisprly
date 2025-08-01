@@ -76,40 +76,14 @@
     <h2>Login to Whisprly</h2>
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
+    <button id="loginBtn">Login</button>
 
     <div class="note">
       Don’t have an account? <a href="signup.html">Sign up</a>
     </div>
   </div>
 
-  <script type="module">
-    import { auth } from './firebase-init.js';
-    import {
-      signInWithEmailAndPassword
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-
-    async function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-      }
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        // Redirect to home.html
-        window.location.href = "home.html";
-      } catch (error) {
-        console.error(error);
-        alert("Login failed: " + error.message);
-      }
-    }
-
-    window.login = login; // expose to global
-  </script>
+  <script type="module" src="./scripts/login.js"></script>
 
 </body>
 </html>

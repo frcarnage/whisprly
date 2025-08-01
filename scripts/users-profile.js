@@ -1,67 +1,142 @@
-import { db, auth } from "./firebase-init.js";
+import { auth, db } from './firebase-init.js';
 import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs
+  doc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove,
+  collection, query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Get user ID from query param
 const urlParams = new URLSearchParams(window.location.search);
-const userId = urlParams.get("uid");
+const uid = urlParams.get('uid');
 
-if (!userId) {
-  alert("User not found!");
-}
+// UI references
+const profilePic = document.getElementById('profilePic');
+const usernameEl = document.getElementById('username');
+const nameEl = document.getElementById('name');
+const bioEl = document.getElementById('bio');
+const followersCountEl = document.getElementById('followersCount');
+const followingCountEl = document.getElementById('followingCount');
+const followBtn = document.getElementById('followBtn');
+const messageBtn = document.getElementById('messageBtn');
+const userPosts = document.getElementById('userPosts');
 
-// Fetch user data
-const userRef = doc(db, "users", userId);
-const userSnap = await getDoc(userRef);
+let currentUser;
+let viewedUser;
 
-if (userSnap.exists()) {
-  const userData = userSnap.data();
-  document.getElementById("profile-pic").src = userData.profilePic || "/assets/avatar.png";
-  document.getElementById("username").textContent = "@" + userData.username;
-  document.getElementById("fullname").textContent = userData.fullName || "Unknown";
-  document.getElementById("followers-count").textContent = userData.followers?.length || 0;
-  document.getElementById("following-count").textContent = userData.following?.length || 0;
-
-  if (userData.isVerified) {
-    document.getElementById("verified-icon").style.display = "inline-block";
+// 🔹 Fetch and show user profile
+async function loadUserProfile() {
+  if (!uid) {
+    alert("User ID not found in URL");
+    return;
   }
 
-  // Load user's posts
-  const postsQuery = query(
-    collection(db, "posts"),
-    where("userId", "==", userId)
-  );
+  try {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (!userDoc.exists()) {
+      alert("User not found");
+      return;
+    }
 
-  const postsSnap = await getDocs(postsQuery);
-  const postsContainer = document.getElementById("posts-container");
-  postsSnap.forEach(doc => {
-    const post = doc.data();
-    const postElement = document.createElement("div");
-    postElement.innerHTML = `
-      <h4>${post.title}</h4>
-      <p>${post.content}</p>
-    `;
-    postsContainer.appendChild(postElement);
-  });
+    viewedUser = { uid, ...userDoc.data() };
+
+    profilePic.src = viewedUser.profilePic || "https://via.placeholder.com/80";
+    usernameEl.textContent = viewedUser.username || "unknown";
+    nameEl.textContent = viewedUser.name || "";
+    bioEl.textContent = viewedUser.bio || "";
+
+    // Count followers & following
+    followersCountEl.textContent = viewedUser.followers?.length || 0;
+    followingCountEl.textContent = viewedUser.following?.length || 0;
+
+    // 🔹 Check current user to show Follow or Message button
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        if (currentUser.uid === uid) {
+          followBtn.style.display = "none";
+          messageBtn.style.display = "none";
+        } else {
+          updateFollowButton();
+          followBtn.style.display = "inline-block";
+          messageBtn.style.display = "inline-block";
+        }
+      }
+    });
+
+    loadUserPosts();
+  } catch (err) {
+    console.error("Error loading profile:", err);
+  }
 }
 
-// Buttons
-document.getElementById("follow-btn").addEventListener("click", () => {
-  alert("Follow feature will be added.");
+// 🔹 Follow/Unfollow logic
+async function toggleFollow() {
+  if (!currentUser || !viewedUser) return;
+
+  const myRef = doc(db, "users", currentUser.uid);
+  const theirRef = doc(db, "users", viewedUser.uid);
+
+  const isFollowing = viewedUser.followers?.includes(currentUser.uid);
+
+  try {
+    if (isFollowing) {
+      await updateDoc(myRef, { following: arrayRemove(viewedUser.uid) });
+      await updateDoc(theirRef, { followers: arrayRemove(currentUser.uid) });
+    } else {
+      await updateDoc(myRef, { following: arrayUnion(viewedUser.uid) });
+      await updateDoc(theirRef, { followers: arrayUnion(currentUser.uid) });
+    }
+  } catch (err) {
+    console.error("Follow/unfollow failed:", err);
+  }
+}
+
+// 🔹 Update follow button text
+function updateFollowButton() {
+  const isFollowing = viewedUser.followers?.includes(currentUser.uid);
+  followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+}
+
+// 🔹 Show user's posts
+async function loadUserPosts() {
+  try {
+    const q = query(collection(db, "posts"), where("userId", "==", uid));
+    const snapshot = await getDocs(q);
+    userPosts.innerHTML = "";
+
+    if (snapshot.empty) {
+      userPosts.innerHTML = "<p>No posts yet.</p>";
+      return;
+    }
+
+    snapshot.forEach(docSnap => {
+      const post = docSnap.data();
+      const postDiv = document.createElement("div");
+      postDiv.innerHTML = `
+        <img src="${post.imageUrl || 'https://via.placeholder.com/200'}" alt="Post" style="width: 100%; border-radius: 12px;">
+        <p style="font-weight: bold;">${post.title || ""}</p>
+      `;
+      userPosts.appendChild(postDiv);
+    });
+  } catch (err) {
+    console.error("Error loading user posts:", err);
+  }
+}
+
+// 🔹 Handle button clicks
+followBtn.addEventListener("click", toggleFollow);
+messageBtn.addEventListener("click", () => {
+  if (viewedUser && currentUser) {
+    window.location.href = `chat.html?uid=${viewedUser.uid}`;
+  }
 });
 
-document.getElementById("message-btn").addEventListener("click", () => {
-  window.location.href = `/chat.html?uid=${userId}`;
+// 🔹 Listen to real-time changes
+onSnapshot(doc(db, "users", uid), (docSnap) => {
+  if (docSnap.exists()) {
+    viewedUser = { uid, ...docSnap.data() };
+    followersCountEl.textContent = viewedUser.followers?.length || 0;
+    followingCountEl.textContent = viewedUser.following?.length || 0;
+    if (currentUser) updateFollowButton();
+  }
 });
 
-document.getElementById("more-btn").addEventListener("click", () => {
-  const action = prompt("Options:\n1. Report\n2. Block");
-  if (action === "1") alert("Reported!");
-  else if (action === "2") alert("Blocked!");
-});
+window.addEventListener("DOMContentLoaded", loadUserProfile);

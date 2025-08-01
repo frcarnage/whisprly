@@ -1,22 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile - Whisprly</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="./users-profile.js" defer></script>
 </head>
-<body>
-  <div id="profileSection"></div>
-  <div id="actionButtons" style="margin-top: 1rem;"></div>
-  <div id="userPosts" style="margin-top: 2rem;"></div>
+<body style="font-family: Arial, sans-serif; background: #f5f5f5; padding: 1rem;">
 
-  <!-- 3-dot menu -->
-  <div id="threeDotMenu" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; border-radius: 5px; z-index: 999;">
-    <ul style="list-style: none; padding: 0; margin: 0;">
-      <li onclick="reportUser()" style="padding: 8px; cursor: pointer;">🚩 Report</li>
-      <li onclick="blockUser()" style="padding: 8px; cursor: pointer;">⛔ Block</li>
-    </ul>
+  <div id="profileContainer" style="background: #fff; padding: 1.5rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center;">
+        <img id="profilePic" src="" alt="Profile Picture" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 1rem;" />
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <h2 id="username" style="margin: 0;"></h2>
+            <img id="verifiedBadge" src="./verified.png" alt="Verified" title="Verified Account" style="display: none; width: 18px; height: 18px;" />
+          </div>
+          <p id="bio" style="margin: 0; color: #555;"></p>
+        </div>
+      </div>
+
+      <div>
+        <button id="optionsBtn" style="background: transparent; border: none; font-size: 1.5rem;">⋮</button>
+        <div id="optionsMenu" style="display: none; position: absolute; background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 0.5rem; box-shadow: 0 0 5px rgba(0,0,0,0.2); z-index: 100;">
+          <button id="reportBtn" style="display: block; width: 100%;">Report</button>
+          <button id="blockBtn" style="display: block; width: 100%;">Block</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 1rem;">
+      <button id="followBtn" style="margin-right: 1rem; padding: 0.5rem 1rem;">Follow</button>
+      <button id="messageBtn" style="padding: 0.5rem 1rem;">Message</button>
+    </div>
+
+    <hr style="margin: 1.5rem 0;" />
+
+    <div id="userPosts" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;"></div>
   </div>
 
-  <script type="module" src="users-profile.js"></script>
 </body>
 </html>

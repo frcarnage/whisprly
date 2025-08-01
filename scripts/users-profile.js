@@ -5,7 +5,8 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   onAuthStateChanged
@@ -56,6 +57,8 @@ async function loadUserProfile(userId) {
 
     if (data.isVerified) {
       verifiedBadge.innerHTML = `<img src="verified.png" style="width: 16px; vertical-align: middle;" />`;
+    } else {
+      verifiedBadge.innerHTML = "";
     }
 
     // 🔹 Set Follow / Unfollow
@@ -68,10 +71,12 @@ async function loadUserProfile(userId) {
       const isFollowing = currentUserData.following?.includes(userId);
 
       followBtn.innerText = isFollowing ? "Unfollow" : "Follow";
+      followBtn.style.display = "inline-block";
       followBtn.onclick = async () => {
         await toggleFollow(userId, isFollowing);
       };
 
+      messageBtn.style.display = "inline-block";
       messageBtn.onclick = () => {
         window.location.href = `/chat-detail.html?uid=${userId}`;
       };
@@ -108,8 +113,8 @@ async function toggleFollow(targetUid, isFollowing) {
     : [...(targetData.followers || []), currentUser.uid];
 
   await Promise.all([
-    doc(db, "users", currentUser.uid).update({ following: newFollowing }),
-    doc(db, "users", targetUid).update({ followers: newFollowers }),
+    updateDoc(userRef, { following: newFollowing }),
+    updateDoc(targetRef, { followers: newFollowers }),
   ]);
 
   location.reload();

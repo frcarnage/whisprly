@@ -15,7 +15,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("fullname").textContent = data.fullName;
     document.getElementById("username").textContent = "@" + data.username;
     document.getElementById("bio").textContent = data.bio || '';
-    document.getElementById("pfp").src = data.profilePicUrl || 'https://via.placeholder.com/120';
+    document.getElementById("pfp").src = data.profilePic || 'https://via.placeholder.com/120';
   }
 
   const postsRef = collection(db, 'posts');

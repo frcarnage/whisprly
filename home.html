@@ -37,10 +37,13 @@
       color: #BB86FC;
       font-size: 1rem;
       cursor: pointer;
+      transition: color 0.3s ease;
     }
 
-    .nav-buttons button:hover {
+    .nav-buttons button:hover,
+    .nav-buttons button.active {
       color: white;
+      font-weight: bold;
     }
 
     .post-container {
@@ -52,7 +55,7 @@
       padding: 1rem;
       margin-bottom: 1rem;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(255,255,255,0.05);
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
     }
 
     .post h3 {
@@ -82,11 +85,19 @@
     <button onclick="goTo('chat.html')">Chat</button>
     <button onclick="goTo('notifications.html')">Notifications</button>
     <button onclick="goTo('profile.html')">Profile</button>
+    <button class="active" onclick="goTo('home.html')">Home</button>
   </div>
 
   <div class="post-container" id="postContainer">
     <!-- Posts will be rendered here -->
   </div>
+
+  <!-- Navigation script -->
+  <script>
+    function goTo(path) {
+      window.location.href = path;
+    }
+  </script>
 
   <!-- ✅ Load post-fetching script -->
   <script type="module" src="./scripts/home.js"></script>

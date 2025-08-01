@@ -1,142 +1,138 @@
-import { auth, db } from './firebase-init.js';
+import { db, auth } from './firebase-init.js';
 import {
-  doc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove,
-  collection, query, where, getDocs
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const urlParams = new URLSearchParams(window.location.search);
-const uid = urlParams.get('uid');
+const uid = new URLSearchParams(window.location.search).get("uid");
+const loading = document.getElementById("loading");
+const profileContent = document.getElementById("profileContent");
 
-// UI references
-const profilePic = document.getElementById('profilePic');
-const usernameEl = document.getElementById('username');
-const nameEl = document.getElementById('name');
-const bioEl = document.getElementById('bio');
-const followersCountEl = document.getElementById('followersCount');
-const followingCountEl = document.getElementById('followingCount');
-const followBtn = document.getElementById('followBtn');
-const messageBtn = document.getElementById('messageBtn');
-const userPosts = document.getElementById('userPosts');
+const profilePic = document.getElementById("profilePic");
+const username = document.getElementById("username");
+const fullName = document.getElementById("fullName");
+const bio = document.getElementById("bio");
+const followersCount = document.getElementById("followersCount");
+const followingCount = document.getElementById("followingCount");
+const verifiedBadge = document.getElementById("verifiedBadge");
+const followBtn = document.getElementById("followBtn");
+const messageBtn = document.getElementById("messageBtn");
+const userPosts = document.getElementById("userPosts");
 
 let currentUser;
-let viewedUser;
 
-// 🔹 Fetch and show user profile
-async function loadUserProfile() {
-  if (!uid) {
-    alert("User ID not found in URL");
-    return;
+onAuthStateChanged(auth, async (user) => {
+  if (user && uid) {
+    currentUser = user;
+    await loadUserProfile(uid);
+  } else {
+    window.location.href = "/login.html";
   }
+});
 
+async function loadUserProfile(userId) {
   try {
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (!userDoc.exists()) {
-      alert("User not found");
+    const docSnap = await getDoc(doc(db, "users", userId));
+    if (!docSnap.exists()) {
+      loading.innerText = "User not found.";
       return;
     }
 
-    viewedUser = { uid, ...userDoc.data() };
+    const data = docSnap.data();
 
-    profilePic.src = viewedUser.profilePic || "https://via.placeholder.com/80";
-    usernameEl.textContent = viewedUser.username || "unknown";
-    nameEl.textContent = viewedUser.name || "";
-    bioEl.textContent = viewedUser.bio || "";
+    profilePic.src = data.profilePic || "https://via.placeholder.com/100";
+    username.innerText = data.username || "";
+    fullName.innerText = data.fullName || "";
+    bio.innerText = data.bio || "";
+    followersCount.innerText = data.followers?.length || 0;
+    followingCount.innerText = data.following?.length || 0;
 
-    // Count followers & following
-    followersCountEl.textContent = viewedUser.followers?.length || 0;
-    followingCountEl.textContent = viewedUser.following?.length || 0;
+    if (data.isVerified) {
+      verifiedBadge.innerHTML = `<img src="verified.png" style="width: 16px; vertical-align: middle;" />`;
+    }
 
-    // 🔹 Check current user to show Follow or Message button
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        currentUser = user;
-        if (currentUser.uid === uid) {
-          followBtn.style.display = "none";
-          messageBtn.style.display = "none";
-        } else {
-          updateFollowButton();
-          followBtn.style.display = "inline-block";
-          messageBtn.style.display = "inline-block";
-        }
-      }
-    });
-
-    loadUserPosts();
-  } catch (err) {
-    console.error("Error loading profile:", err);
-  }
-}
-
-// 🔹 Follow/Unfollow logic
-async function toggleFollow() {
-  if (!currentUser || !viewedUser) return;
-
-  const myRef = doc(db, "users", currentUser.uid);
-  const theirRef = doc(db, "users", viewedUser.uid);
-
-  const isFollowing = viewedUser.followers?.includes(currentUser.uid);
-
-  try {
-    if (isFollowing) {
-      await updateDoc(myRef, { following: arrayRemove(viewedUser.uid) });
-      await updateDoc(theirRef, { followers: arrayRemove(currentUser.uid) });
+    // 🔹 Set Follow / Unfollow
+    if (currentUser.uid === userId) {
+      followBtn.style.display = "none";
+      messageBtn.style.display = "none";
     } else {
-      await updateDoc(myRef, { following: arrayUnion(viewedUser.uid) });
-      await updateDoc(theirRef, { followers: arrayUnion(currentUser.uid) });
-    }
-  } catch (err) {
-    console.error("Follow/unfollow failed:", err);
-  }
-}
+      const currentUserSnap = await getDoc(doc(db, "users", currentUser.uid));
+      const currentUserData = currentUserSnap.data();
+      const isFollowing = currentUserData.following?.includes(userId);
 
-// 🔹 Update follow button text
-function updateFollowButton() {
-  const isFollowing = viewedUser.followers?.includes(currentUser.uid);
-  followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
-}
+      followBtn.innerText = isFollowing ? "Unfollow" : "Follow";
+      followBtn.onclick = async () => {
+        await toggleFollow(userId, isFollowing);
+      };
 
-// 🔹 Show user's posts
-async function loadUserPosts() {
-  try {
-    const q = query(collection(db, "posts"), where("userId", "==", uid));
-    const snapshot = await getDocs(q);
-    userPosts.innerHTML = "";
-
-    if (snapshot.empty) {
-      userPosts.innerHTML = "<p>No posts yet.</p>";
-      return;
+      messageBtn.onclick = () => {
+        window.location.href = `/chat-detail.html?uid=${userId}`;
+      };
     }
 
-    snapshot.forEach(docSnap => {
-      const post = docSnap.data();
-      const postDiv = document.createElement("div");
-      postDiv.innerHTML = `
-        <img src="${post.imageUrl || 'https://via.placeholder.com/200'}" alt="Post" style="width: 100%; border-radius: 12px;">
-        <p style="font-weight: bold;">${post.title || ""}</p>
-      `;
-      userPosts.appendChild(postDiv);
-    });
-  } catch (err) {
-    console.error("Error loading user posts:", err);
+    await loadPostsByUser(userId);
+
+    loading.style.display = "none";
+    profileContent.style.display = "block";
+  } catch (e) {
+    console.error("Error loading profile:", e);
+    loading.innerText = "Something went wrong.";
   }
 }
 
-// 🔹 Handle button clicks
-followBtn.addEventListener("click", toggleFollow);
-messageBtn.addEventListener("click", () => {
-  if (viewedUser && currentUser) {
-    window.location.href = `chat.html?uid=${viewedUser.uid}`;
-  }
-});
+async function toggleFollow(targetUid, isFollowing) {
+  const userRef = doc(db, "users", currentUser.uid);
+  const targetRef = doc(db, "users", targetUid);
 
-// 🔹 Listen to real-time changes
-onSnapshot(doc(db, "users", uid), (docSnap) => {
-  if (docSnap.exists()) {
-    viewedUser = { uid, ...docSnap.data() };
-    followersCountEl.textContent = viewedUser.followers?.length || 0;
-    followingCountEl.textContent = viewedUser.following?.length || 0;
-    if (currentUser) updateFollowButton();
-  }
-});
+  const currentSnap = await getDoc(userRef);
+  const targetSnap = await getDoc(targetRef);
 
-window.addEventListener("DOMContentLoaded", loadUserProfile);
+  if (!currentSnap.exists() || !targetSnap.exists()) return;
+
+  const currentData = currentSnap.data();
+  const targetData = targetSnap.data();
+
+  const newFollowing = isFollowing
+    ? currentData.following.filter((id) => id !== targetUid)
+    : [...(currentData.following || []), targetUid];
+
+  const newFollowers = isFollowing
+    ? targetData.followers.filter((id) => id !== currentUser.uid)
+    : [...(targetData.followers || []), currentUser.uid];
+
+  await Promise.all([
+    doc(db, "users", currentUser.uid).update({ following: newFollowing }),
+    doc(db, "users", targetUid).update({ followers: newFollowers }),
+  ]);
+
+  location.reload();
+}
+
+async function loadPostsByUser(userId) {
+  const q = query(collection(db, "posts"), where("userId", "==", userId));
+  const snap = await getDocs(q);
+  userPosts.innerHTML = "";
+
+  snap.forEach((doc) => {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.style = "margin: 10px 0; padding: 10px; border: 1px solid #ccc;";
+    div.innerHTML = `
+      <h3>${data.title}</h3>
+      <p>${data.content}</p>
+      ${data.imageUrl ? `<img src="${data.imageUrl}" style="max-width: 100%;" />` : ""}
+    `;
+    userPosts.appendChild(div);
+  });
+
+  if (snap.empty) {
+    userPosts.innerHTML = "<p style='text-align:center;'>No posts yet.</p>";
+  }
+}

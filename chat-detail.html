@@ -1,25 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chat • Whisprly</title>
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="./chat-detail.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whisprly Chat</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f8;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #chatHeader {
+      background-color: #fff;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #chatUserPic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    #chatTitle {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    #messagesContainer {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 75%;
+      margin-bottom: 10px;
+      display: flex;
+    }
+
+    .sent {
+      align-self: flex-end;
+      justify-content: flex-end;
+    }
+
+    .received {
+      align-self: flex-start;
+      justify-content: flex-start;
+    }
+
+    .msg-bubble {
+      background-color: #e1e1e1;
+      padding: 10px 15px;
+      border-radius: 15px;
+      position: relative;
+      font-size: 14px;
+    }
+
+    .sent .msg-bubble {
+      background-color: #dcf8c6;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #555;
+      margin-top: 5px;
+      display: block;
+      text-align: right;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #fff;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+
+    #sendBtn {
+      padding: 10px 15px;
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #sendBtn:hover {
+      background-color: #005ecc;
+    }
+  </style>
 </head>
 <body>
-  <div id="chat-header" style="padding: 10px; border-bottom: 1px solid #ccc;">
-    <button onclick="history.back()">←</button>
-    <span id="chatUserName" style="font-weight: bold; margin-left: 10px;"></span>
+
+  <!-- Header with profile pic and name -->
+  <div id="chatHeader">
+    <img id="chatUserPic" src="" alt="User" />
+    <div id="chatTitle">Chat</div>
   </div>
 
-  <div id="chatMessages" style="height: 70vh; overflow-y: scroll; padding: 10px;"></div>
+  <!-- Chat messages -->
+  <div id="messagesContainer"></div>
 
-  <div id="typingStatus" style="font-size: 0.9rem; color: gray; padding-left: 10px;"></div>
-
-  <div id="chatInput" style="display: flex; padding: 10px; gap: 8px; border-top: 1px solid #ccc;">
-    <input type="text" id="messageInput" placeholder="Type a message..."
-           style="flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc;">
-    <button id="sendButton">➤</button>
+  <!-- Input bar -->
+  <div id="chatInputContainer">
+    <input type="text" id="messageInput" placeholder="Type a message..." />
+    <button id="sendBtn">Send</button>
   </div>
+
+  <script type="module" src="./scripts/chat-detail.js"></script>
 </body>
 </html>

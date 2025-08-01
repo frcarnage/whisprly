@@ -1,0 +1,38 @@
+<!-- chat-detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whisprly | Chat</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/firebase-init.js" type="module"></script>
+  <script src="js/chat.js" type="module"></script>
+  <script src="js/route-guard.js" type="module"></script>
+  <script src="js/nav.js" type="module"></script>
+</head>
+<body>
+  <div id="nav"></div>
+
+  <main>
+    <h2 id="chatUserName">Chat</h2>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button id="sendBtn">Send</button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { loadChatDetail, sendMessage } from './js/chat.js';
+    const params = new URLSearchParams(window.location.search);
+    const chatId = params.get('chatId');
+
+    loadChatDetail(chatId);
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const text = document.getElementById('messageInput').value.trim();
+      if (text) sendMessage(chatId, text);
+    });
+  </script>
+</body>
+</html>

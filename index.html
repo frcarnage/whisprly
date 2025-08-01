@@ -2,135 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Whisprly</title>
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whisprly | Speak Freely</title>
+  <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background-color: #0F0418;
       color: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     header {
       display: flex;
       justify-content: space-between;
+      padding: 20px 40px;
       align-items: center;
-      padding: 20px 30px;
     }
 
-    .auth-buttons a {
-      margin-left: 15px;
-      text-decoration: none;
-      color: white;
-      padding: 10px 18px;
-      border: 1px solid white;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: background 0.2s ease;
+    .btn {
+      padding: 10px 20px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
-    .auth-buttons a:hover {
-      background-color: white;
+    .btn-login {
+      background-color: #fff;
       color: #0F0418;
     }
 
-    main {
-      flex: 1;
+    .btn-signup {
+      background-color: #6C2DC7;
+      color: white;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 100px 20px 60px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    .features {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      gap: 30px;
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .feature-box {
+      background-color: #1A0C2C;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #301145;
+    }
+
+    .download-section {
       text-align: center;
-      padding: 40px 20px;
+      margin: 80px 20px 40px;
     }
 
-    .logo {
-      width: 120px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-
-    .heading {
-      font-size: 2.2rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .subheading {
-      font-size: 1.1rem;
-      color: #ccc;
-      max-width: 500px;
-    }
-
-    .coming-soon {
-      margin-top: 30px;
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 15px 25px;
-      border-radius: 8px;
-      font-weight: 500;
-    }
-
-    .socials {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    .socials a {
-      color: #ccc;
-      margin: 0 10px;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .socials a:hover {
-      color: white;
+    .download-box {
+      background-color: #1A0C2C;
+      border: 1px dashed #6C2DC7;
+      padding: 30px;
+      border-radius: 12px;
+      display: inline-block;
     }
 
     footer {
-      padding: 30px 20px;
-      font-size: 0.9rem;
-      background-color: #0B0313;
       text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #aaa;
     }
 
-    .legal-links {
-      margin-top: 20px;
-    }
-
-    .legal-links a {
+    footer a {
       color: #aaa;
       text-decoration: none;
       margin: 0 10px;
-      font-size: 0.85rem;
     }
 
-    .legal-links a:hover {
-      color: white;
+    footer a:hover {
+      color: #fff;
     }
 
-    @media (max-width: 600px) {
-      .heading {
-        font-size: 1.6rem;
+    @media screen and (max-width: 768px) {
+      .features {
+        padding: 0 10px;
       }
 
-      .auth-buttons a {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-      }
-
-      .legal-links {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .legal-links a {
-        margin: 5px;
+      .hero h1 {
+        font-size: 2.2rem;
       }
     }
   </style>
@@ -138,39 +115,60 @@
 <body>
 
   <header>
-    <img src="logo.png" alt="Whisprly Logo" class="logo" />
-    <div class="auth-buttons">
-      <a href="login.html">Login</a>
-      <a href="signup.html">Sign Up</a>
+    <div class="logo">
+      <img src="logo.png" alt="Whisprly" height="40" />
+    </div>
+    <div>
+      <a href="login.html" class="btn btn-login">Login</a>
+      <a href="signup.html" class="btn btn-signup">Signup</a>
     </div>
   </header>
 
-  <main>
-    <h1 class="heading">Welcome to Whisprly</h1>
-    <p class="subheading">
-      Speak freely. Connect authentically. A modern and anonymous social space that’s bold, fast, and secure.
-    </p>
+  <section class="hero">
+    <h1>Whisprly</h1>
+    <p>Speak Freely. Connect Deeply.</p>
+  </section>
 
-    <div class="coming-soon">
-      📱 Our app is launching soon on Android & iOS. Stay tuned!
+  <section class="features">
+    <div class="feature-box">
+      <h2>🚀 Real-Time Feed</h2>
+      <p>See what others are posting in real-time. Discover trending thoughts and voices.</p>
     </div>
 
-    <div class="socials">
-      <p>Follow us on:</p>
-      <a href="https://instagram.com/whisprly.app" target="_blank">Instagram</a>
-      <a href="https://chat.whatsapp.com/yourchannel" target="_blank">WhatsApp Channel</a>
+    <div class="feature-box">
+      <h2>💬 Chat Freely</h2>
+      <p>Start conversations with anyone you follow. Your messages are always private.</p>
     </div>
-  </main>
+
+    <div class="feature-box">
+      <h2>📢 Report & Appeal</h2>
+      <p>Community-first: Easily report abuse or appeal if you've been restricted.</p>
+    </div>
+
+    <div class="feature-box">
+      <h2>🔍 Smart Search</h2>
+      <p>Find users, posts, and chats quickly using powerful keyword and tag search.</p>
+    </div>
+
+    <div class="feature-box">
+      <h2>👥 Profile Customization</h2>
+      <p>Add bio, picture, follow users, and make your space feel like you.</p>
+    </div>
+  </section>
+
+  <section class="download-section">
+    <div class="download-box">
+      <h2>📲 Download Whisprly App</h2>
+      <p>Coming soon to Play Store and App Store</p>
+      <p>Stay tuned for the launch!</p>
+    </div>
+  </section>
 
   <footer>
-    © 2025 Whisprly. All rights reserved.
-
-    <div class="legal-links">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="tos.html">Terms of Service</a>
-      <a href="licenses.html">Licenses</a>
-      <a href="guidelines.html">Community Guidelines</a>
-    </div>
+    <a href="privacy.html">Privacy Policy</a> |
+    <a href="tos.html">Terms of Service</a> |
+    <a href="guidelines.html">Community Guidelines</a> |
+    <a href="licenses.html">Open Source Licenses</a>
   </footer>
 
 </body>

@@ -1,18 +1,1 @@
-# Public Legal Pages
-/privacy          /privacy.html         200
-/terms            /tos.html             200
-/guidelines       /guidelines.html      200
-/licenses         /licenses.html        200
-
-# Admin Area
-/admin            /admin/login.html     200
-/admin/login      /admin/login.html     200
-/admin-pannel     /admin-pannel/dashboard.html 200
-/admin-pannel/dashboard   /admin-pannel/dashboard.html 200
-/admin-pannel/users       /admin-pannel/users.html      200
-/admin-pannel/reports     /admin-pannel/reports.html    200
-/admin-pannel/posts       /admin-pannel/posts.html      200
-/admin-pannel/blocked     /admin-pannel/blocked_users.html 200
-
-# Optional: Catch-all for SPA fallback (Flutter web, etc.)
-/*                /index.html           200
+/*    /index.html   200

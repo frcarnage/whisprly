@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Whisprly – Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body,html {
+      margin:0; padding:0; height:100%; background: #111; color: #ddd;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background: #222;
+      color: #40aae3;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    header button {
+      background: #40aae3;
+      border: none;
+      color: #000;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    #chatList {
+      width: 320px;
+      background: #222;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    #chatList h2 {
+      margin-top: 0;
+      color: #40aae3;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .chat-item {
+      padding: 12px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      color: #ccc;
+      cursor: pointer;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+    .chat-item:hover {
+      background: #333;
+      border-color: #40aae3;
+      color: #eee;
+    }
+    .chat-item.selected {
+      background: #40aae3;
+      color: #000;
+      font-weight: bold;
+      border-color: #40aae3;
+    }
+    .chat-item.closed {
+      opacity: 0.6;
+      cursor: default;
+    }
+    #chatWindow {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #181818;
+      padding: 12px;
+      overflow: hidden;
+    }
+    #chatInfo {
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      color: #aaa;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding-inline: 4px;
+    }
+    .message {
+      margin-bottom: 12px;
+      max-width: 70%;
+      border-radius: 18px;
+      padding: 10px 16px;
+      color: #eee;
+      word-wrap: break-word;
+      font-size: 1rem;
+    }
+    .message.agent {
+      background: #4080ff;
+      align-self: flex-end;
+      color: #fff;
+    }
+    .message.user {
+      background: #333;
+      align-self: flex-start;
+    }
+    .timestamp {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 2px;
+      text-align: right;
+    }
+    #replyBox {
+      display: flex;
+      margin-top: 10px;
+    }
+    #replyInput {
+      flex: 1;
+      border-radius: 18px;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1rem;
+      background: #222;
+      color: #eee;
+      outline: none;
+    }
+    #sendBtn {
+      margin-left: 10px;
+      border-radius: 18px;
+      background: #40aae3;
+      border: none;
+      width: 90px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #000;
+      transition: background 0.2s;
+    }
+    #sendBtn:disabled {
+      background: #555;
+      cursor: not-allowed;
+      color: #999;
+    }
+    #assignBtn, #closeBtn {
+      margin-left: 12px;
+      padding: 6px 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      border:none;
+      color: #fff;
+    }
+    #assignBtn {
+      background: #4080ff;
+    }
+    #assignBtn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    #closeBtn {
+      background: tomato;
+    }
+    #closeBtn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Whisprly Admin Dashboard</h1>
+    <button id="signoutBtn">Sign Out</button>
+  </header>
+  <main>
+    <div id="chatList">
+      <h2>Support Chats</h2>
+      <div id="chatItems"></div>
+    </div>
+    <div id="chatWindow">
+      <div id="chatInfo">
+        <div>
+          <b>ID:</b> <span id="chatIdDisplay">None</span><br />
+          <small>Status: <span id="chatStatus">N/A</span></small><br />
+          <small>Assigned: <span id="chatAssigned">None</span></small>
+        </div>
+        <div>
+          <button id="assignBtn">Assign to Me</button>
+          <button id="closeBtn">Mark as Resolved</button>
+        </div>
+      </div>
+      <div id="messages"></div>
+      <div id="replyBox">
+        <input type="text" id="replyInput" placeholder="Type your reply..." />
+        <button id="sendBtn" disabled>Send</button>
+      </div>
+    </div>
+  </main>
+
+<script>
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
+    authDomain: "whisprly-5415a.firebaseapp.com",
+    projectId: "whisprly-5415a",
+    databaseURL: "https://whisprly-5415a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    storageBucket: "whisprly-5415a.firebasestorage.app",
+    messagingSenderId: "269867240239",
+    appId: "1:269867240239:web:377d0a7c3d1c3870c7efda",
+    measurementId: "G-2CXWX5ZWH5"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const rdb = firebase.database();
+
+  // DOM elements refs
+  const chatItemsEl = document.getElementById('chatItems');
+  const chatIdDisplay = document.getElementById('chatIdDisplay');
+  const chatStatusEl = document.getElementById('chatStatus');
+  const chatAssignedEl = document.getElementById('chatAssigned');
+  const assignBtn = document.getElementById('assignBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const messagesEl = document.getElementById('messages');
+  const replyInput = document.getElementById('replyInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const signoutBtn = document.getElementById('signoutBtn');
+
+  let currentUser;
+  let selectedChat = null;
+  let chatInfo = null;
+  let messagesListener = null;
+  let chatInfoListener = null;
+
+  // Auth check: only admin users allowed
+  auth.onAuthStateChanged(async user => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    currentUser = user;
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    if (!userDoc.exists || userDoc.data().role !== "admin") {
+      // not admin
+      alert("Access denied. Admins only.");
+      auth.signOut();
+      window.location.href = "login.html";
+      return;
+    }
+    loadChats();
+  });
+
+  // Signout button
+  signoutBtn.addEventListener('click', () => {
+    auth.signOut().then(() => window.location.href = "login.html");
+  });
+
+  // Load all chats and render in list
+  function loadChats() {
+    const chatsRef = rdb.ref('supportChats');
+    chatsRef.on('child_added', snapshot => {
+      const chat = { chatId: snapshot.key, ...snapshot.val() };
+      addChatItem(chat);
+    });
+    chatsRef.on('child_changed', snapshot => {
+      const chat = { chatId: snapshot.key, ...snapshot.val() };
+      updateChatItem(chat);
+      if (selectedChat && chat.chatId === selectedChat) {
+        setChatInfo(chat);
+      }
+    });
+  }
+
+  // Create & append chat item
+  function addChatItem(chat) {
+    if (document.getElementById('chat-' + chat.chatId)) return; // already exists
+
+    const div = document.createElement('div');
+    div.id = 'chat-' + chat.chatId;
+    div.className = 'chat-item' + (chat.status === 'closed' ? ' closed' : '');
+    div.textContent = `${chat.chatId} [${chat.status || 'open'}]`;
+    div.addEventListener('click', () => selectChat(chat.chatId));
+    chatItemsEl.appendChild(div);
+  }
+
+  // Update existing chat item style
+  function updateChatItem(chat) {
+    const div = document.getElementById('chat-' + chat.chatId);
+    if (!div) return;
+    div.textContent = `${chat.chatId} [${chat.status || 'open'}]`;
+    div.className = 'chat-item' + (chat.status === 'closed' ? ' closed' : '');
+  }
+
+  // Select a chat to view messages
+  function selectChat(chatId) {
+    if (selectedChat === chatId) return;
+    selectedChat = chatId;
+    chatIdDisplay.textContent = chatId;
+    messagesEl.innerHTML = '';
+    replyInput.value = '';
+    setChatInfo(null);
+
+    if (messagesListener) {
+      messagesListener.off();
+      messagesListener = null;
+    }
+    if (chatInfoListener) {
+      chatInfoListener.off();
+      chatInfoListener = null;
+    }
+
+    const chatRef = rdb.ref('supportChats/' + chatId);
+    chatInfoListener = chatRef.on('value', snapshot => {
+      const chat = snapshot.val();
+      setChatInfo({ chatId, ...chat });
+    });
+
+    const messagesRef = rdb.ref('supportChats/' + chatId + '/messages');
+    messagesListener = messagesRef.on('child_added', snapshot => {
+      const msg = snapshot.val();
+      addMessage(snapshot.key, msg);
+    });
+  }
+
+  // Set chat metadata info & buttons state
+  function setChatInfo(chat) {
+    chatInfo = chat;
+    if (!chat) {
+      chatStatusEl.textContent = 'N/A';
+      chatAssignedEl.textContent = 'None';
+      disableChatInputs(true);
+      return;
+    }
+    chatStatusEl.textContent = chat.status || 'open';
+    const assignedAgents = chat.participants ? Object.keys(chat.participants) : [];
+    chatAssignedEl.textContent = assignedAgents.length > 0 ? assignedAgents.join(', ') : 'None';
+
+    // Controls enable/disable
+    const isClosed = chat.status === 'closed';
+    const isAssignedToMe = assignedAgents.includes(currentUser.uid);
+    assignBtn.disabled = isClosed || isAssignedToMe;
+    closeBtn.disabled = isClosed || !isAssignedToMe;
+    replyInput.disabled = isClosed || !isAssignedToMe;
+    sendBtn.disabled = isClosed || !isAssignedToMe || !replyInput.value.trim();
+
+    // Highlight selected chat in list
+    updateSelectedChatHighlight(chat.chatId);
+  }
+
+  // Update chat item highlight in list
+  function updateSelectedChatHighlight(chatId) {
+    Array.from(chatItemsEl.children).forEach(item => {
+      item.classList.toggle('selected', item.id === 'chat-' + chatId);
+    });
+  }
+
+  // Add message bubble to chat window
+  function addMessage(id, msg) {
+    const div = document.createElement('div');
+    div.className = 'message ' + (msg.senderId === currentUser.uid ? 'agent' : 'user');
+    div.id = 'msg-' + id;
+
+    div.textContent = msg.text;
+
+    const ts = document.createElement('div');
+    ts.className = 'timestamp';
+    ts.textContent = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : '';
+    div.appendChild(ts);
+
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  // Send reply
+  sendBtn.addEventListener('click', () => {
+    const text = replyInput.value.trim();
+    if (!text || !selectedChat) return;
+    sendAgentMessage(selectedChat, currentUser.uid, text);
+    replyInput.value = '';
+    sendBtn.disabled = true;
+  });
+
+  replyInput.addEventListener('input', () => {
+    sendBtn.disabled = replyInput.value.trim().length === 0 || !replyInput.disabled === false ? true : false;
+  });
+
+  // Assign to me button
+  assignBtn.addEventListener('click', () => {
+    if (!selectedChat) return;
+    assignAgent(selectedChat, currentUser.uid);
+  });
+
+  // Mark as resolved button
+  closeBtn.addEventListener('click', () => {
+    if (!selectedChat) return;
+    updateChatStatus(selectedChat, 'closed');
+  });
+
+  // Firebase RTDB functions to update chat
+
+  function sendAgentMessage(chatId, agentId, text) {
+    const msgRef = rdb.ref(`supportChats/${chatId}/messages`).push();
+    return msgRef.set({
+      senderId: agentId,
+      text,
+      timestamp: Date.now(),
+      type: 'text'
+    });
+  }
+
+  function updateChatStatus(chatId, status) {
+    const chatRef = rdb.ref(`supportChats/${chatId}`);
+    return chatRef.update({ status });
+  }
+
+  function assignAgent(chatId, agentId) {
+    const partRef = rdb.ref(`supportChats/${chatId}/participants`);
+    return partRef.update({ [agentId]: true });
+  }
+
+</script>
+</body>
+</html>

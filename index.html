@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whisprly – Instant Messaging & Support</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .top-bar {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 24px 0 0 24px;
+      z-index: 9;
+    }
+    .top-bar button {
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 18px;
+      margin-right: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .top-bar button:hover {
+      background: #333;
+    }
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding-top: 48px;
+    }
+    .logo {
+      font-size: 2.7rem;
+      font-weight: bold;
+      color: #40aae3;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-shadow: 0 3px 16px #2228;
+    }
+    .subtitle {
+      color: #eee;
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .desc {
+      max-width: 500px;
+      margin: 28px auto 0 auto;
+      color: #bbb;
+      font-size: 1.01rem;
+      line-height: 1.65;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button onclick="window.location.href='login.html'">Login</button>
+    <button onclick="window.location.href='signup.html'">Sign Up</button>
+  </div>
+  <div class="main-content">
+    <div class="logo">Whisprly</div>
+    <div class="subtitle">Instant Messaging & Support</div>
+    <div class="desc">
+      Welcome to Whisprly &mdash; a secure, modern platform for users and agents to connect.  
+      <br>
+      <b>Users:</b> Sign up, chat, and get support right here.  
+      <br>
+      <b>Admins:</b> Log in to manage support cases in real time.
+      <br><br>
+      Fast. Private. Powered by Firebase.
+    </div>
+  </div>
+</body>
+</html>

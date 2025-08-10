@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Whisprly – Support Cases</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: #111;
+      color: #ddd;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 32px;
+      max-width: 700px;
+      margin: auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+      color: #40aae3;
+    }
+    header h1 {
+      margin: 0;
+    }
+    header button {
+      background: #222;
+      color: #40aae3;
+      border: 1px solid #40aae3;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    header button:hover {
+      background: #40aae3;
+      color: #000;
+    }
+    main h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    main p {
+      color: #bbb;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Whisprly Support Cases</h1>
+    <button id="signoutBtn">Sign Out</button>
+  </header>
+  <main>
+    <h2>Support Cases</h2>
+    <p>This section will help admins manage and track ongoing support cases.</p>
+    <p><i>Coming soon...</i></p>
+  </main>
+
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
+      authDomain: "whisprly-5415a.firebaseapp.com",
+      projectId: "whisprly-5415a",
+      databaseURL: "https://whisprly-5415a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      storageBucket: "whisprly-5415a.firebasestorage.app",
+      messagingSenderId: "269867240239",
+      appId: "1:269867240239:web:377d0a7c3d1c3870c7efda",
+      measurementId: "G-2CXWX5ZWH5"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      const userDoc = await db.collection("users").doc(user.uid).get();
+      if (!userDoc.exists || userDoc.data().role !== "admin") {
+        alert("Access denied. Admins only.");
+        auth.signOut();
+        window.location.href = "login.html";
+        return;
+      }
+    });
+
+    document.getElementById("signoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "login.html");
+    });
+  </script>
+</body>
+</html>

@@ -1,65 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Whisprly – Sign Up</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { background: #111; color: #fff; font-family: sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .box { background: #1e1e1e; padding: 24px; border-radius: 8px; width: 280px; }
-    h2 { margin-bottom: 16px; }
-    input { width: 100%; margin: 8px 0; padding: 8px; border: none; border-radius: 4px; background: #333; color: #fff; }
-    button { width: 100%; padding: 10px; background: #40aae3; border: none; color: white; border-radius: 4px; cursor: pointer; margin-top: 8px; }
-    .error { color: tomato; font-size: 0.9em; margin-top: 8px; }
-    a { color: #40aae3; font-size: 0.9em; display:inline-block; margin-top:12px; text-align:center; width:100%; }
-  </style>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+<meta charset="UTF-8">
+<title>Sign Up – Whisprly</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { background: #111; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
+  .box { background: #1e1e1e; padding: 20px; border-radius: 8px; width: 280px; }
+  input, button { width: 100%; margin-top: 10px; padding: 10px; border-radius: 4px; border: none; }
+  input { background: #333; color: #fff; }
+  button { background: #40aae3; color: #000; font-weight: bold; cursor: pointer; }
+  .error { color: tomato; margin-top: 10px; font-size: 0.9rem; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
 </head>
 <body>
-  <div class="box">
-    <h2>Sign Up</h2>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="signup()">Create Account</button>
-    <div class="error" id="err"></div>
-    <a href="login.html">Already have an account? Login</a>
-  </div>
-
+<div class="box">
+  <h2>Sign Up</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Create Account</button>
+  <div class="error" id="err"></div>
+  <a href="login.html" style="color:#40aae3;display:inline-block;margin-top:10px;">Login</a>
+</div>
 <script>
-  // ===== Firebase Config =====
-  const firebaseConfig = {
-      apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
-      authDomain: "whisprly-5415a.firebaseapp.com",
-      projectId: "whisprly-5415a",
-      databaseURL: "https://whisprly-5415a-default-rtdb.asia-southeast1.firebasedatabase.app",
-      storageBucket: "whisprly-5415a.firebasestorage.app",
-      messagingSenderId: "269867240239",
-      appId: "1:269867240239:web:377d0a7c3d1c3870c7efda",
-      measurementId: "G-2CXWX5ZWH5"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+const firebaseConfig = {
+  apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
+  authDomain: "whisprly-5415a.firebaseapp.com",
+  projectId: "whisprly-5415a",
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  async function signup() {
-    document.getElementById('err').textContent = "";
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    try {
-      const cred = await auth.createUserWithEmailAndPassword(email, password);
-      await db.collection("users").doc(cred.user.uid).set({
-        email: email,
-        role: "user"
-      });
-      window.location.href = "home.html";
-    } catch (error) {
-      document.getElementById("err").textContent = error.message;
-    }
-  }
+async function signup() {
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email.value, password.value);
+    await db.collection("users").doc(cred.user.uid).set({ email: email.value, role: "user" });
+    location.href = "home.html";
+  } catch (e) { err.textContent = e.message; }
+}
 </script>
 </body>
 </html>

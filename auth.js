@@ -1,70 +1,41 @@
-// auth.js
+// Auth for admin login
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// LOGIN
-const loginForm = document.getElementById("loginForm");
-if (loginForm) {
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+const auth = getAuth();
+const db = getFirestore();
 
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        window.location.href = "home.html"; // Redirect to home page
-      })
-      .catch((error) => {
-        document.getElementById("loginError").innerText = error.message;
-      });
-  });
-}
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
 
-// SIGNUP
-const signupForm = document.getElementById("signupForm");
-if (signupForm) {
-  signupForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const fullName = document.getElementById("signupFullName").value;
-    const username = document.getElementById("signupUsername").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-
-        // Save user info to Firestore
-        return db.collection("users").doc(user.uid).set({
-          uid: user.uid,
-          fullName: fullName,
-          username: username,
-          email: email,
-          profilePicUrl: "",
-          bio: "",
-          followers: [],
-          following: [],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      })
-      .then(() => {
-        window.location.href = "home.html"; // Redirect to home page
-      })
-      .catch((error) => {
-        document.getElementById("signupError").innerText = error.message;
-      });
-  });
-}
-
-// REDIRECT IF LOGGED IN
-auth.onAuthStateChanged((user) => {
-  const currentPath = window.location.pathname;
-
-  if (user && (currentPath.includes("login.html") || currentPath.includes("signup.html") || currentPath === "/")) {
-    // If logged in and on auth pages, go to home
-    window.location.href = "home.html";
+  if (!email || !password) {
+    errorMsg.textContent = "Please fill all fields.";
+    return;
   }
 
-  if (!user && currentPath.includes("home.html")) {
-    // If not logged in and on home, go to login
-    window.location.href = "login.html";
+  try {
+    // Firebase login
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+
+    // Check role in Firestore
+    const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+
+    if (!userDoc.exists()) {
+      throw new Error("No user record found.");
+    }
+
+    const role = userDoc.data().role || "user";
+    if (role !== "admin") {
+      await auth.signOut();
+      throw new Error("Access denied. Admins only.");
+    }
+
+    // Go to admin dashboard
+    window.location.href = "admin-dashboard.html";
+
+  } catch (error) {
+    errorMsg.textContent = error.message;
   }
 });

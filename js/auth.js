@@ -1,4 +1,4 @@
-// auth.js (v10 modular)
+// /js/auth.js (Firebase v10 Modular)
 
 import { auth, db } from './firebaseconfig.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -18,24 +18,22 @@ loginBtn.addEventListener('click', async () => {
   }
 
   try {
-    // Sign in
+    // Sign in with Firebase Auth
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Check role in Firestore
-    const userDocRef = doc(db, 'users', user.uid);
-    const userSnap = await getDoc(userDocRef);
-
+    // Fetch role from Firestore
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
     if (!userSnap.exists()) {
       throw new Error('User record not found.');
     }
 
-    const userData = userSnap.data();
-    if (userData.role !== 'admin') {
+    const { role } = userSnap.data();
+    if (role !== 'admin') {
       throw new Error('Access denied. Admins only.');
     }
 
-    // Redirect to admin dashboard
+    // Redirect to dashboard
     window.location.href = 'admin-dashboard.html';
 
   } catch (error) {

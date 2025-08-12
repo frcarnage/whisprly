@@ -1,3 +1,8 @@
+// Import functions from v10 modular SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
@@ -11,4 +16,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);

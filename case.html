@@ -10,15 +10,17 @@
   <header>
     <button id="backBtn">⬅ Back</button>
     <h1 id="caseTitle">Loading case...</h1>
-    <div>
+    <div class="case-actions">
       <span>Status: <span id="caseStatus">Loading...</span></span>
       <select id="statusSelect">
         <option value="open">Open</option>
         <option value="assigned">Assigned</option>
-        <option value="closed">Closed</option>
+        <option value="resolved">Resolved</option>
       </select>
       <button id="updateStatusBtn">Update Status</button>
       <button id="assignSelfBtn">Assign to Me</button>
+    </div>
+    <div class="logout-wrapper">
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
@@ -30,6 +32,9 @@
       </div>
       <div class="chat-input">
         <input type="text" id="messageInput" placeholder="Type your message..." />
+        <label>
+          <input type="checkbox" id="sendAsSystem"> Send as SYSTEM
+        </label>
         <button id="sendBtn">Send</button>
       </div>
     </section>

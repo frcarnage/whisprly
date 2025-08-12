@@ -1,10 +1,14 @@
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signOut, onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getDatabase, ref, onValue } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { app } from "./firebaseconfig.js"; // if you export `app` there
 
-const auth = getAuth();
-const db = getFirestore();
-const rtdb = getDatabase();
+const auth = getAuth(app);
+const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
 const casesTable = document.getElementById("casesTable");
 
@@ -59,7 +63,6 @@ function loadCases() {
       casesTable.appendChild(tr);
     });
 
-    // Attach click listeners
     document.querySelectorAll(".viewBtn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const id = e.target.dataset.id;

@@ -1,5 +1,3 @@
-// /js/dashboard.js (Firebase v10 Modular)
-
 import { auth, db, rtdb } from './firebaseconfig.js';
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -7,20 +5,20 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 
 const casesTable = document.getElementById("casesTable");
 
-// Logout button
+// Logout
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "admin-login.html";
 });
 
-// Auth state listener
+// Auth check
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "admin-login.html";
     return;
   }
 
-  // Check admin role
+  // Firestore role check
   const userDoc = await getDoc(doc(db, "users", user.uid));
   if (!userDoc.exists() || userDoc.data().role !== "admin") {
     await signOut(auth);
@@ -28,41 +26,43 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Load cases if admin
+  // Load all cases
   loadCases();
 });
 
 function loadCases() {
   const casesRef = ref(rtdb, "support_cases");
+
   onValue(casesRef, (snapshot) => {
     casesTable.innerHTML = "";
-    const data = snapshot.val();
-
-    if (!data) {
+    if (!snapshot.exists()) {
       casesTable.innerHTML = "<tr><td colspan='6'>No cases found</td></tr>";
       return;
     }
 
-    Object.values(data).forEach(caseItem => {
+    const data = snapshot.val();
+
+    Object.entries(data).forEach(([key, caseItem]) => {
       const tr = document.createElement("tr");
 
-      const createdAt = caseItem.createdAt
-        ? new Date(caseItem.createdAt).toLocaleString()
-        : "N/A";
+      let createdAt = "N/A";
+      if (typeof caseItem.createdAt === "number") {
+        createdAt = new Date(caseItem.createdAt).toLocaleString();
+      }
 
       tr.innerHTML = `
-        <td>${caseItem.caseId || ""}</td>
+        <td>${caseItem.caseId || key}</td>
         <td>${caseItem.reason || ""}</td>
         <td>${caseItem.status || ""}</td>
         <td>${caseItem.assignedTo || "-"}</td>
         <td>${createdAt}</td>
-        <td><button class="viewBtn" data-id="${caseItem.caseId}">View</button></td>
+        <td><button class="viewBtn" data-id="${key}">View</button></td>
       `;
 
       casesTable.appendChild(tr);
     });
 
-    // Attach "View" button listeners
+    // Attach listeners
     document.querySelectorAll(".viewBtn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const id = e.target.dataset.id;

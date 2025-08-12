@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Case Details</title>
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+  <script src="firebaseconfig.js"></script>
+</head>
+<body>
+  <header>
+    <h1 id="caseTitle">Case</h1>
+    <button id="backBtn">Back</button>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <section>
+    <p><b>Status:</b> <span id="caseStatus"></span></p>
+    <select id="statusSelect">
+      <option value="open">Open</option>
+      <option value="assigned">Assigned</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <button id="updateStatusBtn">Update Status</button>
+    <button id="assignSelfBtn">Assign to Me</button>
+  </section>
+
+  <section id="chatBox" style="border:1px solid #ccc; height:300px; overflow-y:auto; margin-top:20px; padding:10px;">
+    <!-- Messages will appear here -->
+  </section>
+
+  <section style="margin-top:20px;">
+    <input type="text" id="messageInput" placeholder="Type your message" style="width:80%;">
+    <button id="sendBtn">Send</button>
+  </section>
+
+  <script src="case.js"></script>
+</body>
+</html>

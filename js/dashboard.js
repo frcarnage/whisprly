@@ -1,5 +1,3 @@
-// /js/dashboard.js
-
 import { auth, db, rtdb } from './firebaseconfig.js';
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -7,24 +5,19 @@ import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 
 const casesTable = document.getElementById("casesTable");
 
-// ============================
-// Logout button handler
-// ============================
+// ===== Logout =====
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "admin-login.html";
 });
 
-// ============================
-// Auth state listener
-// ============================
+// ===== Auth guard =====
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "admin-login.html";
     return;
   }
 
-  // Check if logged-in user is admin via Firestore
   const userDoc = await getDoc(doc(db, "users", user.uid));
   if (!userDoc.exists() || userDoc.data().role !== "admin") {
     await signOut(auth);
@@ -32,76 +25,74 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Load cases for admin
   loadCases();
 });
 
-// ============================
-// Load and render cases
-// ============================
+// ===== Load & Render Cases =====
 function loadCases() {
   const casesRef = ref(rtdb, "support_cases");
 
   onValue(casesRef, (snapshot) => {
     casesTable.innerHTML = "";
     if (!snapshot.exists()) {
-      casesTable.innerHTML = "<tr><td colspan='6'>No cases found</td></tr>";
+      casesTable.innerHTML = `<tr><td colspan='6' style="text-align:center;color:#888;">No cases found</td></tr>`;
       return;
     }
 
     const data = snapshot.val();
     let casesArray = [];
 
-    // Convert object to array with key as fallback caseId
     Object.entries(data).forEach(([key, caseItem]) => {
       const id = caseItem.caseId || key;
-      let createdAt = null;
-      if (typeof caseItem.createdAt === "number") {
-        createdAt = caseItem.createdAt;
-      }
-      casesArray.push({
-        ...caseItem,
-        caseId: id,
-        createdAt: createdAt
-      });
+      let createdAt = typeof caseItem.createdAt === "number" ? caseItem.createdAt : null;
+      casesArray.push({ ...caseItem, caseId: id, createdAt });
     });
 
-    // Sort — open/unassigned first, then newest date
+    // Sort priority: open & unassigned first, then newest
     casesArray.sort((a, b) => {
-      // First: open/unassigned at top
-      const aPriority = (a.status === 'open' && (!a.assignedTo || a.assignedTo === "")) ? 1 : 0;
-      const bPriority = (b.status === 'open' && (!b.assignedTo || b.assignedTo === "")) ? 1 : 0;
-      if (aPriority !== bPriority) return bPriority - aPriority;
-
-      // Then: newest first
+      const aPri = a.status === 'open' && (!a.assignedTo || !a.assignedTo.trim()) ? 1 : 0;
+      const bPri = b.status === 'open' && (!b.assignedTo || !b.assignedTo.trim()) ? 1 : 0;
+      if (aPri !== bPri) return bPri - aPri;
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
 
-    // Render rows
+    // Render each case row
     casesArray.forEach(caseItem => {
       const tr = document.createElement("tr");
 
-      let createdAtDisplay = "N/A";
-      if (caseItem.createdAt) {
-        createdAtDisplay = new Date(caseItem.createdAt).toLocaleString();
-      }
+      // Date formatting
+      const createdAtDisplay = caseItem.createdAt
+        ? new Date(caseItem.createdAt).toLocaleString()
+        : "N/A";
+
+      // Status badge with colors
+      const status = (caseItem.status || "").toLowerCase();
+      let statusClass = "";
+      if (status === "open") statusClass = "status-badge open";
+      else if (status === "assigned") statusClass = "status-badge assigned";
+      else if (status === "resolved") statusClass = "status-badge resolved";
+
+      // Assigned display
+      const assignedDisplay = caseItem.assignedTo && caseItem.assignedTo.trim() !== ""
+        ? caseItem.assignedTo
+        : "<span style='color:#aaa;'>—</span>";
 
       tr.innerHTML = `
         <td>${caseItem.caseId}</td>
         <td>${caseItem.reason || ""}</td>
-        <td>${caseItem.status || ""}</td>
-        <td>${caseItem.assignedTo && caseItem.assignedTo.trim() !== "" ? caseItem.assignedTo : "-"}</td>
+        <td><span class="${statusClass}">${caseItem.status || ""}</span></td>
+        <td>${assignedDisplay}</td>
         <td>${createdAtDisplay}</td>
         <td>
-          <button class="viewBtn" data-id="${caseItem.caseId}">View</button>
+          <button class="action-btn view-btn" data-id="${caseItem.caseId}">View</button>
         </td>
       `;
 
       casesTable.appendChild(tr);
     });
 
-    // Attach button listeners
-    document.querySelectorAll(".viewBtn").forEach(btn => {
+    // Action handlers
+    document.querySelectorAll(".view-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const id = e.target.dataset.id;
         window.location.href = `case.html?id=${id}`;

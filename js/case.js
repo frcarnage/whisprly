@@ -6,11 +6,11 @@ import { ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/1
 const urlParams = new URLSearchParams(window.location.search);
 const caseId = urlParams.get("id");
 
+// DOM refs
 const caseTitle = document.getElementById("caseTitle");
 const caseStatus = document.getElementById("caseStatus");
 const chatBox = document.getElementById("chatBox");
 const messageInput = document.getElementById("messageInput");
-
 const backBtn = document.getElementById("backBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const sendBtn = document.getElementById("sendBtn");
@@ -19,18 +19,18 @@ const assignSelfBtn = document.getElementById("assignSelfBtn");
 const statusSelect = document.getElementById("statusSelect");
 const sendAsSystemCheckbox = document.getElementById("sendAsSystem");
 
-// Back navigation
+let currentAdminId = null;
+let currentAdminEmail = null;
+let currentAdminName = null;
+
 backBtn.addEventListener("click", () => {
   window.location.href = "admin-dashboard.html";
 });
 
-// Logout
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "admin-login.html";
 });
-
-let currentAdminId = null;
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -46,11 +46,12 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   currentAdminId = user.uid;
+  currentAdminEmail = user.email;
+  currentAdminName = userDoc.data().name || user.email.split("@")[0];
 
   loadCaseData();
   loadMessages();
 
-  // Send message
   sendBtn.addEventListener("click", () => {
     const text = messageInput.value.trim();
     if (!text) return;
@@ -60,29 +61,34 @@ onAuthStateChanged(auth, async (user) => {
 
     push(msgRef, {
       senderId: currentAdminId,
+      senderEmail: currentAdminEmail,
+      senderName: currentAdminName,
+      senderRole: "admin",
       text,
       timestamp: Date.now(),
       type
     });
+
     messageInput.value = "";
     sendAsSystemCheckbox.checked = false;
   });
 
-  // Update case status
   updateStatusBtn.addEventListener("click", () => {
     const newStatus = statusSelect.value;
     update(ref(rtdb, `support_cases/${caseId}`), { status: newStatus });
   });
 
-  // Assign case to me
   assignSelfBtn.addEventListener("click", () => {
     update(ref(rtdb, `support_cases/${caseId}`), {
       assignedTo: currentAdminId,
       status: "assigned"
     });
-    const messagesRef = ref(rtdb, `support_cases/${caseId}/messages`);
-    push(messagesRef, {
+    const msgRef = ref(rtdb, `support_cases/${caseId}/messages`);
+    push(msgRef, {
       senderId: currentAdminId,
+      senderEmail: currentAdminEmail,
+      senderName: currentAdminName,
+      senderRole: "admin",
       text: "Admin has joined the chat.",
       timestamp: Date.now(),
       type: "system"
@@ -95,20 +101,16 @@ function loadCaseData() {
   onValue(caseRef, (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
-
     caseTitle.textContent = `Case: ${data.caseId}`;
-
-    // Apply status badge styling
     caseStatus.textContent = data.status;
     caseStatus.className = "status-badge " + (data.status || "").toLowerCase();
-
     statusSelect.value = data.status;
   });
 }
 
 function loadMessages() {
-  const messagesRef = ref(rtdb, `support_cases/${caseId}/messages`);
-  onValue(messagesRef, (snapshot) => {
+  const msgRef = ref(rtdb, `support_cases/${caseId}/messages`);
+  onValue(msgRef, (snapshot) => {
     chatBox.innerHTML = "";
     const data = snapshot.val();
     if (!data) {
@@ -116,30 +118,39 @@ function loadMessages() {
       return;
     }
 
+    // Sort chronologically
     Object.values(data)
       .sort((a, b) => a.timestamp - b.timestamp)
       .forEach(msg => {
-        const div = document.createElement("div");
+        const bubble = document.createElement("div");
 
-        // SYSTEM messages
+        // SYSTEM message
         if (msg.type === "system") {
-          div.className = "message system";
-          div.textContent = msg.text;
+          bubble.className = "message system";
+          bubble.textContent = msg.text;
         }
-        // This admin's own messages
+        // My own messages
         else if (msg.senderId === currentAdminId) {
-          div.className = "message user";
-          div.textContent = msg.text;
+          bubble.className = "message user";
+          bubble.innerHTML = `<strong>You:</strong> ${msg.text}`;
         }
-        // Other messages (users or other admins)
+        // Other admin
+        else if (msg.senderRole === "admin") {
+          const label = msg.senderName || msg.senderEmail?.split("@")[0] || "Admin";
+          bubble.className = "message other";
+          bubble.innerHTML = `<strong>Admin (${label}):</strong> ${msg.text}`;
+        }
+        // Customer
         else {
-          div.className = "message other";
-          div.textContent = msg.text;
+          const label = msg.senderName || msg.senderEmail?.split("@")[0] || "Customer";
+          bubble.className = "message other";
+          bubble.innerHTML = `<strong>${label}:</strong> ${msg.text}`;
         }
 
-        chatBox.appendChild(div);
+        chatBox.appendChild(bubble);
       });
 
+    // Scroll to bottom
     chatBox.scrollTop = chatBox.scrollHeight;
   });
 }

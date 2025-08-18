@@ -27,7 +27,6 @@
       background: linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 100%);
       overflow-x: hidden;
     }
-    /* Animated background blobs */
     .bg-anim {
       position: fixed;
       z-index: 0;
@@ -210,7 +209,7 @@
     }
     button.btn-primary:hover {
       background: #23cd92;
-      color: var(--bg-dark);
+      color: var(--bg1);
       box-shadow: 0 8px 29px #23cd92aa;
       transform: scale(1.035);
     }
@@ -258,9 +257,12 @@
       color: #b6c8e1;
       cursor: pointer;
       transition: color 0.18s, transform 0.12s;
+      padding: 0;
+      display: flex;
+      align-items: center;
     }
     .eye-toggle:active {
-      color: #005cff;
+      color: var(--primary);
       transform: scale(1.14);
     }
     @media (max-width: 480px) {
@@ -274,11 +276,9 @@
       .header { top: 11px; left: 8px; }
     }
   </style>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-  <!-- Animated Blobs Background -->
   <div class="bg-anim" aria-hidden="true">
     <div class="blob blob1"></div>
     <div class="blob blob2"></div>
@@ -290,7 +290,7 @@
   </header>
   <main>
     <section class="auth-container" role="main" aria-labelledby="login-title">
-      <img src="assets/logo.png" alt="Whisprly Logo" class="logo-anim" />
+      <img src="logo.png" alt="Whisprly Logo" class="logo-anim" />
       <h2 id="login-title">Login to Whisprly</h2>
       <form id="loginForm" aria-describedby="loginError" novalidate autocomplete="on">
         <div class="input-group">
@@ -315,49 +315,19 @@
     </section>
   </main>
   <script>
-    // Password eye toggle logic
     function togglePassword() {
-      const pwdInput = document.getElementById('loginPassword');
-      const eyeIcon = document.getElementById('eyeIcon');
-      if (pwdInput.type === 'password') {
-        pwdInput.type = 'text';
-        eyeIcon.className = 'fas fa-eye-slash';
+      const input = document.getElementById('loginPassword');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
       } else {
-        pwdInput.type = 'password';
-        eyeIcon.className = 'fas fa-eye';
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
       }
     }
-    // Animated error fade out (optional)
-    function showError(text) {
-      const err = document.getElementById('loginError');
-      err.textContent = text;
-      err.classList.remove('fade');
-      setTimeout(()=>err.classList.add('fade'),1800);
-    }
-    // Demo: form interaction feedback
-    document.getElementById('loginForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const pwd = document.getElementById('loginPassword').value;
-      document.getElementById('login-btn-text').style.display = 'none';
-      document.getElementById('login-spinner').style.display = '';
-
-      // Replace with your real auth logic below!
-      setTimeout(function() {
-        document.getElementById('login-btn-text').style.display = '';
-        document.getElementById('login-spinner').style.display = 'none';
-        if (email === "user@domain.com" && pwd === "password") {
-          window.location.href = "app.html";
-        } else {
-          showError("Invalid email or password. Try again!");
-        }
-      }, 1300);
-    });
   </script>
-  <!-- Firebase scripts here -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="auth.js"></script>
+  <script src="/js/firebaseconfig.js"></script>
+  <script src="/js/auth.js"></script>
 </body>
 </html>

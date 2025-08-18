@@ -3,156 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whisprly – Connect & Support</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Whisprly – Connect Your World</title>
   <style>
     :root {
-      --primary: #0064ff;
-      --accent: #32f198;
-      --dark: #1b2c4a;
-      --light: #f5f7fa;
-      --shadow: 0 12px 32px #0055d690;
-      --radius: 28px;
+      --primary: #005cff;
+      --accent: #28eca3;
+      --deep: #223350;
+      --bg-grad: linear-gradient(115deg, #9ecfff 0%, #f6faff 80%);
     }
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
       font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-      background: linear-gradient(125deg, #d8e8ff 0%, #f5f7fa 100%);
-      color: var(--dark);
+      color: var(--deep);
+      background: var(--bg-grad), #fff;
       min-height: 100vh;
-      overflow-x: hidden;
     }
     .navbar {
+      position: relative;
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 7vw 10px 2vw;
+      padding: 18px 7vw 12px 2vw;
       background: transparent;
-      position: relative;
-      z-index: 10;
     }
     .brand {
       display: flex;
-      align-items: center;
-      gap: 13px;
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: var(--primary);
+      font-weight: 900;
+      gap: 12px;
       letter-spacing: 1px;
+      align-items: center;
+      color: var(--primary);
+      font-size: 1.55rem;
     }
     .brand img {
-      height: 40px;
-      border-radius: 12px;
-      box-shadow: 0 1px 12px #0055d62a;
+      height: 41px;
+      border-radius: 11px;
+      box-shadow: 0 2px 16px #0055d633;
     }
     .nav-btns {
       display: flex;
-      gap: 14px;
+      gap: 13px;
     }
     .nav-btns button {
-      padding: 8px 26px;
-      border-radius: 25px;
+      padding: 9px 29px;
+      border-radius: 26px;
       border: none;
       background: var(--primary);
       color: #fff;
-      font-size: 1.08rem;
-      font-weight: 500;
-      box-shadow: 0 4px 18px #0064ff23;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 3px 15px #0064ff23;
       cursor: pointer;
-      letter-spacing: 0.2px;
-      transition: background 0.18s, color 0.18s;
+      transition: background 0.14s, color 0.16s, transform 0.13s;
       outline: none;
+      letter-spacing: 0.15px;
     }
     .nav-btns button.signup {
       background: var(--accent);
-      color: var(--dark);
-      font-weight: 700;
-      box-shadow: 0 4px 22px #32f19833;
+      color: var(--deep);
+      font-weight: bold;
     }
     .nav-btns button:hover {
-      background: #0037b3;
+      background: #0e2db8;
       color: #f2f2f2;
+      transform: scale(1.07);
     }
     .nav-btns button.signup:hover {
-      background: #28ba77;
+      background: #17c684;
       color: #fff;
     }
-    .hero {
-      max-width: 550px;
+    .main-content {
+      position: relative;
+      max-width: 540px;
       margin: 5vh auto 0 auto;
-      background: var(--panel-bg);
+      background: rgba(255,255,255,0.93);
       text-align: center;
-      padding: 52px 28px 38px 28px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      background: rgba(255,255,255,0.85);
+      border-radius: 32px;
+      box-shadow: 0 6px 62px 0 #1876ef1a;
+      padding: 50px 32px 42px 32px;
+      z-index: 1;
+      overflow: visible;
     }
     .hero-logo {
-      width: 74px;
-      margin-bottom: 14px;
-      box-shadow: 0 9px 27px #0055d633;
+      width: 78px;
+      margin-bottom: 17px;
       border-radius: 20px;
+      box-shadow: 0 9px 29px #007bff38;
+      background: #fff;
     }
     .hero-title {
-      font-size: 2.25rem;
+      font-size: 2.30rem;
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 18px;
-      letter-spacing: 0.8px;
-      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      margin-bottom: 13px;
+      letter-spacing: 1.1px;
+      min-height: 54px;
+    }
+    .typing-anim {
+      border-right: 2.5px solid #0095ff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 2.6s steps(22, end), blink .7s step-end infinite alternate;
+    }
+    @keyframes typing {
+      from { width: 0 }
+      to   { width: 100% }
+    }
+    @keyframes blink {
+      from, to { border-color: transparent }
+      50% { border-color: #0095ff }
     }
     .hero-tagline {
-      font-size: 1.2rem;
-      color: #1b2c4a;
-      opacity: 0.87;
-      margin-bottom: 28px;
-      font-weight: 500;
+      font-size: 1.15rem;
+      opacity: 0.83;
+      color: #213b52;
+      margin: 0 0 25px 0;
       line-height: 1.5;
+      font-weight: 500;
     }
     .hero-actions {
       display: flex;
-      flex-direction: row;
-      gap: 18px;
       justify-content: center;
+      gap: 17px;
+      margin-bottom: 12px;
     }
     .hero-actions button {
-      padding: 12px 38px;
+      padding: 13px 37px;
       font-size: 1.12rem;
-      font-weight: 600;
-      border-radius: 30px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      border-radius: 32px;
+      border: none;
+      box-shadow: 0 3px 24px #007bff1c;
       background: var(--primary);
       color: #fff;
-      border: none;
       cursor: pointer;
-      box-shadow: 0 3px 18px #0064ff29;
-      transition: background 0.18s;
-      margin-bottom: 12px;
-      outline: none;
+      transition: background 0.15s, color 0.15s, transform 0.14s;
     }
     .hero-actions button.signup {
       background: var(--accent);
-      color: var(--dark);
+      color: var(--deep);
+      font-weight: bold;
     }
     .hero-actions button:hover {
-      background: #0037b3;
-      color: #f4f4f4;
+      background: #0e2db8;
+      color: #f2f2f2;
+      transform: scale(1.07);
     }
     .hero-actions button.signup:hover {
-      background: #28ba77;
+      background: #1ae891;
       color: #fff;
     }
-    @media (max-width: 700px) {
-      .hero {
-        margin-top: 7vw;
-        padding: 30px 7vw 26px 7vw;
-      }
-      .navbar {
-        padding: 10px 3vw 8px 2vw;
-      }
-      .hero-title { font-size: 1.54rem; }
-      .hero-tagline { font-size: 1rem; }
-      .hero-logo { width: 54px; }
-      .hero-actions button { font-size: 0.99rem; padding: 9px 23px; }
+    /* Social floating cards (demo posts/profiles) */
+    .floating-card {
+      position: absolute;
+      min-width: 162px;
+      min-height: 65px;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 8px 36px #005cff21;
+      padding: 18px 15px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: transform 0.7s cubic-bezier(0.17,0.67,0.8,1.16), box-shadow 0.25s;
+      opacity: 0.98;
+      border: 1.4px solid #e8f2ff;
+      animation: floatUp 2.3s cubic-bezier(0.18, 0.94, 0.78, 1.11) both;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(70px) scale(0.65); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .floating-card img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 3px 13px #0a96f429;
+    }
+    .floating1 {
+      left: -140px; top: 46px;
+      animation-delay: .6s;
+    }
+    .floating2 {
+      right: -135px; top: -23px;
+      animation-delay: 1.2s;
+    }
+    .floating3 {
+      left: -110px; bottom: 16px;
+      animation-delay: 1.8s;
+    }
+    .floating4 {
+      right: -110px; bottom: 18px;
+      animation-delay: 2.1s;
+    }
+    @media (max-width: 900px) {
+      .main-content { margin-top: 18vw; }
+      .hero-title { font-size: 1.57rem; }
+      .hero-logo { width: 56px; }
+      .navbar { padding: 9px 3vw 8px 2vw; }
+      .floating-card { display: none; }
     }
   </style>
 </head>
@@ -168,15 +223,58 @@
     </div>
   </div>
   <main>
-    <div class="hero">
+    <div class="main-content" style="position:relative;">
+      <!-- Floating demo social cards -->
+      <div class="floating-card floating1">
+        <img src="assets/user2.png" alt="User1">
+        <span>@lucas posted a pic!</span>
+      </div>
+      <div class="floating-card floating2">
+        <img src="assets/user3.png" alt="User2">
+        <span>@anya followed you</span>
+      </div>
+      <div class="floating-card floating3">
+        <img src="assets/user4.png" alt="User3">
+        <span>@maxwell: Love this app! 💬</span>
+      </div>
+      <div class="floating-card floating4">
+        <img src="assets/user5.jpg" alt="User4">
+        <span>@clara: New Post 🎉</span>
+      </div>
+      <!-- Central content -->
       <img src="assets/logo.png" alt="Whisprly Logo" class="hero-logo">
-      <div class="hero-title">Welcome to Whisprly</div>
-      <div class="hero-tagline">Effortless chat support for your product. Secure, simple, and lightning fast communication between customers and support teams.</div>
+      <div class="hero-title">
+        <span class="typing-anim" id="typewriter"></span>
+      </div>
+      <div class="hero-tagline">Share moments. Follow friends. Discover stories. Whisprly brings your world closer, one post and chat at a time.</div>
       <div class="hero-actions">
         <button onclick="window.location.href='login.html'">Login</button>
         <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
       </div>
     </div>
   </main>
+  <script>
+    // Animated typing effect
+    const TEXTS = [
+      "Welcome to Whisprly.",
+      "Your Social World. ",
+      "Follow. Post. Connect."
+    ];
+    let txtIdx = 0, char = 0, typingDiv = document.getElementById('typewriter');
+
+    function typeText() {
+      if(!typingDiv) return;
+      typingDiv.textContent = TEXTS[txtIdx].slice(0, char++);
+      if (char <= TEXTS[txtIdx].length) {
+        setTimeout(typeText, 55);
+      } else {
+        setTimeout(() => {
+          char = 0; txtIdx = (txtIdx + 1) % TEXTS.length;
+          typeText();
+        }, 1200);
+      }
+    }
+    typeText();
+  </script>
 </body>
 </html>

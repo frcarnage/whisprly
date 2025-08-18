@@ -3,22 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whisprly Admin Login</title>
+  <title>Whisprly – Connect & Support</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    :root {
+      --primary: #0064ff;
+      --accent: #32f198;
+      --dark: #1b2c4a;
+      --light: #f5f7fa;
+      --shadow: 0 12px 32px #0055d690;
+      --radius: 28px;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: linear-gradient(125deg, #d8e8ff 0%, #f5f7fa 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 7vw 10px 2vw;
+      background: transparent;
+      position: relative;
+      z-index: 10;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .brand img {
+      height: 40px;
+      border-radius: 12px;
+      box-shadow: 0 1px 12px #0055d62a;
+    }
+    .nav-btns {
+      display: flex;
+      gap: 14px;
+    }
+    .nav-btns button {
+      padding: 8px 26px;
+      border-radius: 25px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1.08rem;
+      font-weight: 500;
+      box-shadow: 0 4px 18px #0064ff23;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      transition: background 0.18s, color 0.18s;
+      outline: none;
+    }
+    .nav-btns button.signup {
+      background: var(--accent);
+      color: var(--dark);
+      font-weight: 700;
+      box-shadow: 0 4px 22px #32f19833;
+    }
+    .nav-btns button:hover {
+      background: #0037b3;
+      color: #f2f2f2;
+    }
+    .nav-btns button.signup:hover {
+      background: #28ba77;
+      color: #fff;
+    }
+    .hero {
+      max-width: 550px;
+      margin: 5vh auto 0 auto;
+      background: var(--panel-bg);
+      text-align: center;
+      padding: 52px 28px 38px 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: rgba(255,255,255,0.85);
+    }
+    .hero-logo {
+      width: 74px;
+      margin-bottom: 14px;
+      box-shadow: 0 9px 27px #0055d633;
+      border-radius: 20px;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 18px;
+      letter-spacing: 0.8px;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+    .hero-tagline {
+      font-size: 1.2rem;
+      color: #1b2c4a;
+      opacity: 0.87;
+      margin-bottom: 28px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .hero-actions {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      justify-content: center;
+    }
+    .hero-actions button {
+      padding: 12px 38px;
+      font-size: 1.12rem;
+      font-weight: 600;
+      border-radius: 30px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 3px 18px #0064ff29;
+      transition: background 0.18s;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .hero-actions button.signup {
+      background: var(--accent);
+      color: var(--dark);
+    }
+    .hero-actions button:hover {
+      background: #0037b3;
+      color: #f4f4f4;
+    }
+    .hero-actions button.signup:hover {
+      background: #28ba77;
+      color: #fff;
+    }
+    @media (max-width: 700px) {
+      .hero {
+        margin-top: 7vw;
+        padding: 30px 7vw 26px 7vw;
+      }
+      .navbar {
+        padding: 10px 3vw 8px 2vw;
+      }
+      .hero-title { font-size: 1.54rem; }
+      .hero-tagline { font-size: 1rem; }
+      .hero-logo { width: 54px; }
+      .hero-actions button { font-size: 0.99rem; padding: 9px 23px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Whisprly Admin Panel</h1>
-    <input type="email" id="email" placeholder="Admin Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button id="loginBtn">Login</button>
-    <p id="errorMsg" class="error"></p>
+  <div class="navbar">
+    <span class="brand">
+      <img src="assets/logo.png" alt="Whisprly Logo">
+      Whisprly
+    </span>
+    <div class="nav-btns">
+      <button onclick="window.location.href='login.html'">Login</button>
+      <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
   </div>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/auth.js"></script>
+  <main>
+    <div class="hero">
+      <img src="assets/logo.png" alt="Whisprly Logo" class="hero-logo">
+      <div class="hero-title">Welcome to Whisprly</div>
+      <div class="hero-tagline">Effortless chat support for your product. Secure, simple, and lightning fast communication between customers and support teams.</div>
+      <div class="hero-actions">
+        <button onclick="window.location.href='login.html'">Login</button>
+        <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
+      </div>
+    </div>
+  </main>
 </body>
 </html>

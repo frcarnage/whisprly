@@ -16,7 +16,7 @@ loginBtn.addEventListener('click', async () => {
   loginBtn.textContent = 'Logging in...';
 
   const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value; // password trimmed if you want: .trim()
+  const password = passwordInput.value; // optionally .trim()
 
   if (!email || !password) {
     errorMsg.textContent = 'Please fill in both fields.';
@@ -24,28 +24,27 @@ loginBtn.addEventListener('click', async () => {
     return;
   }
 
-  if (email !== 'vinitjha2712@gmail.com') {
-    errorMsg.textContent = 'Unauthorized: Only admins can log in.';
-    resetButton();
-    return;
-  }
-
   try {
+    // Sign in with Firebase Auth
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Fetch user record to get role
     const userSnap = await getDoc(doc(db, 'users', user.uid));
     if (!userSnap.exists()) {
       throw new Error('User record not found.');
     }
 
     const { role } = userSnap.data();
-    if (role !== 'admin') {
-      throw new Error('Access denied. Admins only.');
-    }
 
-    // Redirect to admin dashboard
-    window.location.href = 'admin-dashboard.html';
+    // Role-based redirect
+    if (role === 'admin') {
+      window.location.href = 'admin-dashboard.html';   // Admin panel
+    } else if (role === 'user') {
+      window.location.href = 'home.html';              // Normal user home
+    } else {
+      throw new Error('Access denied. Unrecognized role.');
+    }
 
   } catch (error) {
     console.error(error);

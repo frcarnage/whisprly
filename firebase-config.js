@@ -1,6 +1,13 @@
 // firebase-config.js
 
-// Your Firebase configuration
+// Import Firebase SDK modules (if using module bundler like Vite/webpack)
+// If using <script> tags in HTML, skip imports
+// import firebase from "firebase/app";
+// import "firebase/auth";
+// import "firebase/firestore";
+// import "firebase/storage";
+
+// ✅ Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAGJntf2pacqzkhyvj7P80NsNQkSAGX29g",
   authDomain: "whisprly-5415a.firebaseapp.com",
@@ -12,11 +19,19 @@ const firebaseConfig = {
   measurementId: "G-2CXWX5ZWH5"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// ✅ Initialize Firebase only once (avoids duplicate initialization errors)
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // use existing app
+}
 
-// Firestore reference
-const db = firebase.firestore();
+// ✅ References
+const auth = firebase.auth();         // Authentication
+const db = firebase.firestore();      // Firestore Database
+const rtdb = firebase.database();     // Realtime Database
+const storage = firebase.storage();   // Cloud Storage (if needed)
 
-// Auth reference
-const auth = firebase.auth();
+// ✅ Export for use in other files
+// If using ES modules:
+// export { auth, db, rtdb, storage };

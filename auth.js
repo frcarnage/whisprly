@@ -1,41 +1,33 @@
-// auth.js (for user login)
-
+// auth.js
 import { auth, db } from './firebase-config.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const loginBtn = document.getElementById('loginBtn');
-const errorMsg = document.getElementById('errorMsg');
+const loginForm = document.getElementById('loginForm');
+const errorMsg = document.getElementById('loginError'); // Make sure you have <p id="loginError">
 
-loginBtn.addEventListener('click', async () => {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
   errorMsg.textContent = '';
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
 
   if (!email || !password) {
     errorMsg.textContent = 'Please fill in both fields.';
     return;
   }
-
   try {
-    // Sign in
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
-    // Optional: Fetch user document to verify existence in Firestore
+    // Optional: Check Firestore profile exists
     const userDocRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userDocRef);
-
     if (!userSnap.exists()) {
       errorMsg.textContent = 'No profile found. Please sign up first.';
       return;
     }
-
-    // ✅ Redirect to home
     window.location.href = 'home.html';
-
   } catch (error) {
-    console.error(error);
     errorMsg.textContent = error.message;
   }
 });

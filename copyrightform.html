@@ -42,17 +42,39 @@
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    legend {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #7c3aed;
+    }
     label {
       font-weight: 600;
       margin-bottom: 0.3rem;
+      display: block;
+      cursor: pointer;
     }
-    input, select, textarea {
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    select,
+    textarea {
       font-size: 1rem;
       padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 6px;
       width: 100%;
       resize: vertical;
+      box-sizing: border-box;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+      cursor: pointer;
     }
     select {
       height: 2.75rem;
@@ -89,43 +111,34 @@
 </head>
 <body>
   <h1>Copyright Report Form</h1>
-
   <section class="explanation" aria-label="Copyright Report Explanation">
     <strong>Copyright is a legal right that protects original works of authorship, such as film, music, books and art.</strong>
     This form is to be used only for reporting alleged infringements of your copyright on Whisprly. Please note that any other types of claims will not be addressed through this form.
     Abuse of this form may result in the termination of your account or profile.
   </section>
-
   <form id="copyrightForm" novalidate>
     <fieldset>
-      <legend><strong>Describe your relationship to the rights owner</strong></legend>
+      <legend>Describe your relationship to the rights owner</legend>
       <label><input type="radio" name="relationship" value="rights_owner" required /> I am the rights owner.</label>
       <label><input type="radio" name="relationship" value="organization" /> I am reporting on behalf of my organization or client.</label>
       <label><input type="radio" name="relationship" value="someone_else" /> I am reporting on behalf of someone else.</label>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Your Contact Information</strong></legend>
+      <legend>Your Contact Information</legend>
       <p>If you choose to submit this report, we will provide the rights owner's name, your email address, and the nature of your report to the person who posted the content you are reporting. This person may contact you about the report and attempt to resolve the issue.</p>
-
       <label for="name">Your full name *</label>
       <input id="name" name="name" type="text" required placeholder="Full Name" />
-
       <label for="address">Mailing address</label>
       <textarea id="address" name="address" rows="2" placeholder="Mailing address"></textarea>
-
       <label for="email">Email address *</label>
       <input id="email" name="email" type="email" required placeholder="professional@example.com" />
-
       <label for="confirmEmail">Confirm your email address *</label>
       <input id="confirmEmail" name="confirmEmail" type="email" required placeholder="Confirm email" />
-
       <label for="rightsOwnerName">Name of the rights owner *</label>
       <input id="rightsOwnerName" name="rightsOwnerName" type="text" required placeholder="Rights owner's full name or organization" />
     </fieldset>
-
     <fieldset>
-      <legend><strong>Where are you asserting rights?</strong></legend>
+      <legend>Where are you asserting rights?</legend>
       <label for="rightsCountry">Select a country *</label>
       <select id="rightsCountry" name="rightsCountry" required>
         <option value="" disabled selected>Select country</option>
@@ -138,22 +151,19 @@
         <!-- Add more countries as needed -->
       </select>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Which best describes the copyrighted work?</strong></legend>
+      <legend>Which best describes the copyrighted work?</legend>
       <label><input type="radio" name="workType" value="photo" required /> Photo</label>
       <label><input type="radio" name="workType" value="video" /> Video</label>
       <label><input type="radio" name="workType" value="text" /> Text</label>
       <label><input type="radio" name="workType" value="other" /> Other</label>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Provide links or description of the copyrighted work *</strong></legend>
+      <legend>Provide links or description of the copyrighted work *</legend>
       <textarea id="workLinks" name="workLinks" rows="3" required placeholder="URLs or description"></textarea>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Content You Want to Report</strong></legend>
+      <legend>Content You Want to Report</legend>
       <label for="contentType">What type of content are you reporting? *</label>
       <select id="contentType" name="contentType" required>
         <option value="" disabled selected>Select content type</option>
@@ -162,13 +172,11 @@
         <option>Ad</option>
         <option>Other</option>
       </select>
-
       <label for="contentLinks">Provide links/IDs (up to 30)</label>
       <textarea id="contentLinks" name="contentLinks" rows="5" placeholder="One URL or ID per line"></textarea>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Reason for Reporting</strong></legend>
+      <legend>Reason for Reporting</legend>
       <label for="reason">Select a reason *</label>
       <select id="reason" name="reason" required>
         <option value="" disabled selected>Select reason</option>
@@ -179,27 +187,22 @@
       <label for="additionalInfo">Additional information</label>
       <textarea id="additionalInfo" name="additionalInfo" rows="3" placeholder="Any extra details to help understand your report"></textarea>
     </fieldset>
-
     <fieldset>
-      <legend><strong>Declaration Statement *</strong></legend>
+      <legend>Declaration Statement *</legend>
       <label>
         <input type="checkbox" id="declaration" name="declaration" required />
         By submitting this notice, I declare that I have a good faith belief that the reported use is not authorized by the rights owner or law, and the information is accurate. I am authorized to act on behalf of the rights owner.
       </label>
     </fieldset>
-
     <fieldset class="hidden-field">
       <label for="hp_field">Leave this empty</label>
       <input type="text" id="hp_field" name="hp_field" autocomplete="off" tabindex="-1" />
     </fieldset>
-
     <input type="submit" value="Send Report" />
   </form>
-
   <div class="confirmation" id="confirmationMsg" style="display:none;">
     Thank you! Your report has been submitted and will be reviewed promptly.
   </div>
-
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -217,27 +220,21 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const form = document.getElementById("copyrightForm");
     const confirmationMsg = document.getElementById("confirmationMsg");
-
     form.addEventListener("submit", e => {
       e.preventDefault();
-
       // Honeypot spam check (should be empty)
       if (form.hp_field.value) return;
-
       // Simple email confirmation check
       if (form.email.value.trim() !== form.confirmEmail.value.trim()) {
         alert("Email addresses do not match.");
         return;
       }
-
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
-
       const data = {
         relationship: form.relationship.value,
         name: form.name.value.trim(),
@@ -254,7 +251,6 @@
         declaration: form.declaration.checked,
         submittedAt: new Date().toISOString()
       };
-
       db.ref('supportform').push(data)
         .then(() => {
           form.reset();

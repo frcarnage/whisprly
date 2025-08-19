@@ -5,35 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whisprly - Open Source Licenses</title>
   <style>
-    /* Base Light Theme */
+    /* ===== Base Styling ===== */
+    :root {
+      --bg: #fafafa;
+      --text: #222;
+      --card: #fff;
+      --code-bg: #f4f4f4;
+      --code-border: #e2e2e2;
+      --link: #0077cc;
+      --btn-bg: #0F0418;
+      --btn-text: #fff;
+      --btn-hover: #2c123f;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #e5e5e5;
+      --card: #1e1e1e;
+      --code-bg: #2a2a2a;
+      --code-border: #444;
+      --link: #66aaff;
+      --btn-bg: #66aaff;
+      --btn-text: #121212;
+      --btn-hover: #5595dd;
+    }
+
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       max-width: 860px;
       margin: 2rem auto;
       padding: 0 1.5rem;
       line-height: 1.7;
-      background: #fafafa;
-      color: #222;
+      background: var(--bg);
+      color: var(--text);
       transition: background 0.3s, color 0.3s;
     }
 
+    /* ===== Header ===== */
     header {
       text-align: center;
       margin-bottom: 2rem;
+      position: relative;
     }
     header h1 {
-      color: #0F0418;
       font-size: 2.2rem;
       margin-bottom: 0.5rem;
     }
     header p {
       font-size: 1.1rem;
-      color: #444;
     }
 
-    /* License Section */
+    /* Theme Switcher */
+    .theme-toggle {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: var(--card);
+      border: 1px solid var(--code-border);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+    .theme-toggle:hover {
+      opacity: 0.8;
+    }
+
+    /* ===== Sections ===== */
     section {
-      background: #fff;
+      background: var(--card);
       padding: 1.5rem;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -41,31 +83,25 @@
       transition: background 0.3s;
     }
 
-    h2 { 
-      color: #0F0418;
+    h2 {
       font-size: 1.4rem;
       margin-bottom: 0.5rem;
     }
-    p {
-      margin: 0.4rem 0 1rem;
-    }
 
-    /* Code Block */
     pre {
-      background: #f4f4f4;
+      background: var(--code-bg);
       padding: 1rem;
       border-radius: 8px;
+      border: 1px solid var(--code-border);
       overflow-x: auto;
       font-size: 0.9rem;
       white-space: pre-wrap;
-      border: 1px solid #e2e2e2;
-      margin-top: 0.5rem;
       transition: background 0.3s, color 0.3s;
     }
 
-    /* Links */
+    /* ===== Links ===== */
     a {
-      color: #0077cc;
+      color: var(--link);
       text-decoration: none;
       font-weight: 500;
     }
@@ -73,71 +109,33 @@
       text-decoration: underline;
     }
 
-    /* Back Home Button */
+    /* ===== Back Home Button ===== */
     .back-home {
       display: inline-block;
       margin-top: 1.5rem;
       padding: 0.7rem 1.4rem;
-      background: #0F0418;
-      color: #fff;
+      background: var(--btn-bg);
+      color: var(--btn-text);
       border-radius: 6px;
       text-decoration: none;
-      transition: background 0.3s ease;
+      transition: background 0.3s;
       font-weight: 500;
     }
     .back-home:hover {
-      background: #2c123f;
+      background: var(--btn-hover);
     }
 
-    /* Footer */
+    /* ===== Footer ===== */
     footer {
       text-align: center;
       margin-top: 3rem;
       font-size: 0.9rem;
-      color: #555;
-    }
-
-    /* ----------------------------- */
-    /* 🌙 Dark Mode Auto-Detection   */
-    /* ----------------------------- */
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #121212;
-        color: #e5e5e5;
-      }
-      header h1, h2 {
-        color: #fff;
-      }
-      header p {
-        color: #ccc;
-      }
-      section {
-        background: #1e1e1e;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-      }
-      pre {
-        background: #2a2a2a;
-        border: 1px solid #444;
-        color: #e6e6e6;
-      }
-      a {
-        color: #66aaff;
-      }
-      footer {
-        color: #aaa;
-      }
-      .back-home {
-        background: #66aaff;
-        color: #121212;
-      }
-      .back-home:hover {
-        background: #5595dd;
-      }
     }
   </style>
 </head>
 <body>
   <header>
+    <button class="theme-toggle" id="themeToggle">🌓 Auto</button>
     <h1>📄 Open Source Licenses</h1>
     <p>Whisprly is proudly built with contributions from amazing open-source projects.</p>
   </header>
@@ -179,5 +177,35 @@ MIT License
   <footer>
     <p>© 2025 Whisprly. Built with ❤️ using open source.</p>
   </footer>
+
+  <script>
+    const toggleBtn = document.getElementById("themeToggle");
+    const root = document.documentElement;
+    let theme = localStorage.getItem("theme") || "auto";
+
+    function applyTheme() {
+      if (theme === "light") {
+        root.setAttribute("data-theme", "light");
+        toggleBtn.textContent = "🌞 Light";
+      } else if (theme === "dark") {
+        root.setAttribute("data-theme", "dark");
+        toggleBtn.textContent = "🌙 Dark";
+      } else {
+        root.removeAttribute("data-theme");
+        toggleBtn.textContent = "🌓 Auto";
+      }
+    }
+
+    function cycleTheme() {
+      if (theme === "auto") theme = "light";
+      else if (theme === "light") theme = "dark";
+      else theme = "auto";
+      localStorage.setItem("theme", theme);
+      applyTheme();
+    }
+
+    toggleBtn.addEventListener("click", cycleTheme);
+    applyTheme(); // apply on page load
+  </script>
 </body>
 </html>

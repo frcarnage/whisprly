@@ -1,280 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whisprly – Connect Your World</title>
+  <!-- ====== Basic SEO ====== -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Whisprly — Speak Freely, Connect Safely</title>
+  <meta name="description" content="Whisprly is a modern social app for real talk without the noise. Share moments, chat instantly, and connect with communities—safely and privately." />
+  <link rel="canonical" href="https://www.whisprly.netlify.app/" />
+  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="Whisprly, social app, chat app, communities, privacy, social media" />
+  <meta name="theme-color" content="#0F0418" />
+
+  <!-- ====== Open Graph / Social ====== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.whisprly.netlify.app/" />
+  <meta property="og:title" content="Whisprly — Speak Freely, Connect Safely" />
+  <meta property="og:description" content="Real talk. Real connections. Download Whisprly on Android & iOS." />
+  <meta property="og:image" content="https://www.whisprly.netlify.app/og-image.jpg" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Whisprly — Speak Freely, Connect Safely" />
+  <meta name="twitter:description" content="Real talk. Real connections. Download Whisprly on Android & iOS." />
+  <meta name="twitter:image" content="https://www.whisprly.netlify.app/og-image.jpg" />
+
+  <!-- ====== Favicons (replace paths) ====== -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- ====== Fonts (system stack for speed) ====== -->
   <style>
-    :root {
-      --primary: #005cff;
-      --accent: #28eca3;
-      --deep: #223350;
-      --bg-grad: linear-gradient(115deg, #9ecfff 0%, #f6faff 80%);
+    :root{
+      --bg:#0F0418;         /* from your logo background */
+      --bg2:#1b0a2a;
+      --text:#eae6f2;
+      --muted:#bdb6c9;
+      --accent:#7c3aed;     /* purple */
+      --accent-2:#22d3ee;   /* cyan */
+      --card:#160826aa;     /* glass */
+      --border:rgba(255,255,255,.08);
+      --success:#10b981;
+      --warning:#f59e0b;
     }
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-      color: var(--deep);
-      background: var(--bg-grad), #fff;
-      min-height: 100vh;
+    @media (prefers-color-scheme: light){
+      :root{ --text:#0e0615; --muted:#423a4f; --card:#ffffffcc; --border:rgba(0,0,0,.08);}  
+      body{ background: linear-gradient(180deg, #ffffff, #f7f5fb);}
     }
-    .navbar {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 7vw 12px 2vw;
-      background: transparent;
+    *{ box-sizing: border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 10% 10%, #2a0c44 0%, transparent 60%),
+                  radial-gradient(1200px 800px at 90% 0%, #0d3b66 0%, transparent 60%),
+                  linear-gradient(180deg, var(--bg), var(--bg2));
     }
-    .brand {
-      display: flex;
-      font-weight: 900;
-      gap: 12px;
-      letter-spacing: 1px;
-      align-items: center;
-      color: var(--primary);
-      font-size: 1.55rem;
+    a{ color:inherit; text-decoration:none }
+    img{ max-width:100%; height:auto; }
+
+    /* ====== Layout ====== */
+    .container{ width:min(1120px, 92vw); margin-inline:auto }
+    .grid{ display:grid; gap:1.25rem }
+    .btn{ display:inline-flex; align-items:center; gap:.5rem; padding:.85rem 1.1rem; border:1px solid var(--border); border-radius:16px; backdrop-filter:saturate(140%) blur(6px); background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.06)); color:#fff; font-weight:600; box-shadow: 0 10px 24px rgba(0,0,0,.25); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+    .btn:hover{ transform: translateY(-2px); box-shadow: 0 18px 36px rgba(0,0,0,.35); border-color: rgba(255,255,255,.2);}    
+    .btn.primary{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; border-color: transparent; }
+    .btn.ghost{ background: transparent; }
+    .badge{ padding:.4rem .7rem; font-size:.8rem; border-radius:999px; border:1px solid var(--border); color:var(--muted); backdrop-filter:saturate(140%) blur(4px); }
+    .card{ background: var(--card); border:1px solid var(--border); border-radius:24px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+    .section{ padding: 72px 0 }
+    .muted{ color: var(--muted) }
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+    /* ====== Navbar ====== */
+    .nav{ position:sticky; top:0; z-index:50; backdrop-filter: blur(10px) saturate(150%); background: rgba(15,4,24,.5); border-bottom: 1px solid var(--border) }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; min-height:64px; }
+    .brand{ display:flex; align-items:center; gap:.65rem; font-weight:800; letter-spacing:.3px }
+    .brand img{ width:36px; height:36px; border-radius:10px }
+    .nav-links{ display:flex; align-items:center; gap:1rem }
+    .nav-links a{ padding:.6rem .8rem; border-radius:12px; color:var(--muted)}
+    .nav-links a:hover{ color:white; background:rgba(255,255,255,.06)}
+    .nav-cta{ display:flex; align-items:center; gap:.6rem }
+    .hamburger{ display:none; background:transparent; color:white; border:0; font-size:1.4rem; }
+
+    @media (max-width: 880px){
+      .hamburger{ display:block }
+      .nav-links{ display:none }
+      .nav.open .nav-links{ display:flex; flex-direction:column; align-items:flex-start; gap:.5rem; padding:0 1rem 1rem; }
     }
-    .brand img {
-      height: 41px;
-      border-radius: 11px;
-      box-shadow: 0 2px 16px #0055d633;
+
+    /* ====== Hero ====== */
+    .hero{ padding: 72px 0 24px; display:grid; grid-template-columns: 1.1fr .9fr; gap:min(5vw,56px); align-items:center }
+    .hero h1{ font-size: clamp(1.9rem, 3.4vw + 1rem, 3.4rem); line-height:1.05; margin: 10px 0 }
+    .hero p{ font-size: clamp(1rem, .7vw + .8rem, 1.2rem); color:var(--muted) }
+    .hero .actions{ display:flex; gap:.8rem; flex-wrap:wrap; margin-top:18px }
+    .logo-hero{ width:88px; height:88px; border-radius:22px; box-shadow: 0 16px 40px rgba(0,0,0,.4) }
+
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; padding-top: 40px }
+      .hero-visual{ order:-1 }
+      .logo-hero{ width:72px; height:72px }
     }
-    .nav-btns {
-      display: flex;
-      gap: 13px;
-    }
-    .nav-btns button {
-      padding: 9px 29px;
-      border-radius: 26px;
-      border: none;
-      background: var(--primary);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
-      box-shadow: 0 3px 15px #0064ff23;
-      cursor: pointer;
-      transition: background 0.14s, color 0.16s, transform 0.13s;
-      outline: none;
-      letter-spacing: 0.15px;
-    }
-    .nav-btns button.signup {
-      background: var(--accent);
-      color: var(--deep);
-      font-weight: bold;
-    }
-    .nav-btns button:hover {
-      background: #0e2db8;
-      color: #f2f2f2;
-      transform: scale(1.07);
-    }
-    .nav-btns button.signup:hover {
-      background: #17c684;
-      color: #fff;
-    }
-    .main-content {
-      position: relative;
-      max-width: 540px;
-      margin: 5vh auto 0 auto;
-      background: rgba(255,255,255,0.93);
-      text-align: center;
-      border-radius: 32px;
-      box-shadow: 0 6px 62px 0 #1876ef1a;
-      padding: 50px 32px 42px 32px;
-      z-index: 1;
-      overflow: visible;
-    }
-    .hero-logo {
-      width: 78px;
-      margin-bottom: 17px;
-      border-radius: 20px;
-      box-shadow: 0 9px 29px #007bff38;
-      background: #fff;
-    }
-    .hero-title {
-      font-size: 2.30rem;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 13px;
-      letter-spacing: 1.1px;
-      min-height: 54px;
-    }
-    .typing-anim {
-      border-right: 2.5px solid #0095ff;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: typing 2.6s steps(22, end), blink .7s step-end infinite alternate;
-    }
-    @keyframes typing {
-      from { width: 0 }
-      to   { width: 100% }
-    }
-    @keyframes blink {
-      from, to { border-color: transparent }
-      50% { border-color: #0095ff }
-    }
-    .hero-tagline {
-      font-size: 1.15rem;
-      opacity: 0.83;
-      color: #213b52;
-      margin: 0 0 25px 0;
-      line-height: 1.5;
-      font-weight: 500;
-    }
-    .hero-actions {
-      display: flex;
-      justify-content: center;
-      gap: 17px;
-      margin-bottom: 12px;
-    }
-    .hero-actions button {
-      padding: 13px 37px;
-      font-size: 1.12rem;
-      font-weight: 800;
-      letter-spacing: 0.2px;
-      border-radius: 32px;
-      border: none;
-      box-shadow: 0 3px 24px #007bff1c;
-      background: var(--primary);
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, transform 0.14s;
-    }
-    .hero-actions button.signup {
-      background: var(--accent);
-      color: var(--deep);
-      font-weight: bold;
-    }
-    .hero-actions button:hover {
-      background: #0e2db8;
-      color: #f2f2f2;
-      transform: scale(1.07);
-    }
-    .hero-actions button.signup:hover {
-      background: #1ae891;
-      color: #fff;
-    }
-    /* Social floating cards (demo posts/profiles) */
-    .floating-card {
-      position: absolute;
-      min-width: 162px;
-      min-height: 65px;
-      background: #fff;
-      border-radius: 22px;
-      box-shadow: 0 8px 36px #005cff21;
-      padding: 18px 15px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: transform 0.7s cubic-bezier(0.17,0.67,0.8,1.16), box-shadow 0.25s;
-      opacity: 0.98;
-      border: 1.4px solid #e8f2ff;
-      animation: floatUp 2.3s cubic-bezier(0.18, 0.94, 0.78, 1.11) both;
-    }
-    @keyframes floatUp {
-      from { transform: translateY(70px) scale(0.65); opacity: 0; }
-      to   { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    .floating-card img {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 3px 13px #0a96f429;
-    }
-    .floating1 {
-      left: -140px; top: 46px;
-      animation-delay: .6s;
-    }
-    .floating2 {
-      right: -135px; top: -23px;
-      animation-delay: 1.2s;
-    }
-    .floating3 {
-      left: -110px; bottom: 16px;
-      animation-delay: 1.8s;
-    }
-    .floating4 {
-      right: -110px; bottom: 18px;
-      animation-delay: 2.1s;
-    }
-    @media (max-width: 900px) {
-      .main-content { margin-top: 18vw; }
-      .hero-title { font-size: 1.57rem; }
-      .hero-logo { width: 56px; }
-      .navbar { padding: 9px 3vw 8px 2vw; }
-      .floating-card { display: none; }
-    }
+
+    /* ====== Feature Cards ====== */
+    .feature-grid{ grid-template-columns: repeat(3, 1fr) }
+    @media (max-width: 980px){ .feature-grid{ grid-template-columns: 1fr 1fr } }
+    @media (max-width: 620px){ .feature-grid{ grid-template-columns: 1fr } }
+    .feature{ padding:22px; display:flex; gap:14px }
+    .feature-icon{ width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(34,211,238,.25)); border: 1px solid var(--border) }
+
+    /* ====== Download Section ====== */
+    .store-badges{ display:flex; gap:.8rem; flex-wrap:wrap }
+    .store-badge{ padding:.8rem 1rem; border:1px solid var(--border); border-radius:16px; background:rgba(255,255,255,.06); display:flex; align-items:center; gap:.7rem; font-weight:700 }
+    .store-badge img{ width:22px; height:22px }
+
+    /* ====== Footer ====== */
+    footer{ padding: 36px 0; border-top:1px solid var(--border); background: rgba(0,0,0,.25) }
+    .footer-grid{ grid-template-columns: 2fr 1fr 1fr 1fr }
+    @media (max-width: 860px){ .footer-grid{ grid-template-columns: 1fr 1fr } }
+    @media (max-width: 520px){ .footer-grid{ grid-template-columns: 1fr } }
+    .footer-col h4{ margin:0 0 10px 0 }
+    .footer-col a{ display:block; color:var(--muted); padding:.3rem 0 }
+    .footer-col a:hover{ color:white }
+
+    /* ====== Utilities ====== */
+    .center{ text-align:center }
+    .mb-0{ margin-bottom:0 }
+    .mt-0{ margin-top:0 }
   </style>
+
+  <!-- ====== Structured Data ====== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Whisprly",
+    "url": "https://www.whisprly.netlify.app/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.whisprly.com/search?q={query}",
+      "query-input": "required name=query"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "Whisprly",
+    "operatingSystem": "ANDROID, IOS",
+    "applicationCategory": "SocialNetworkingApplication",
+    "offers": {"@type":"Offer","price":"0","priceCurrency":"INR"}
+  }
+  </script>
 </head>
 <body>
-  <div class="navbar">
-    <span class="brand">
-      <img src="assets/logo.png" alt="Whisprly Logo">
-      Whisprly
-    </span>
-    <div class="nav-btns">
-      <button onclick="window.location.href='login.html'">Login</button>
-      <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
-    </div>
-  </div>
-  <main>
-    <div class="main-content" style="position:relative;">
-      <!-- Floating demo social cards -->
-      <div class="floating-card floating1">
-        <img src="assets/user2.png" alt="User1">
-        <span>@lucas posted a pic!</span>
-      </div>
-      <div class="floating-card floating2">
-        <img src="assets/user3.png" alt="User2">
-        <span>@anya followed you</span>
-      </div>
-      <div class="floating-card floating3">
-        <img src="assets/user4.png" alt="User3">
-        <span>@maxwell: Love this app! 💬</span>
-      </div>
-      <div class="floating-card floating4">
-        <img src="assets/user5.jpg" alt="User4">
-        <span>@clara: New Post 🎉</span>
-      </div>
-      <!-- Central content -->
-      <img src="assets/logo.png" alt="Whisprly Logo" class="hero-logo">
-      <div class="hero-title">
-        <span class="typing-anim" id="typewriter"></span>
-      </div>
-      <div class="hero-tagline">Share moments. Follow friends. Discover stories. Whisprly brings your world closer, one post and chat at a time.</div>
-      <div class="hero-actions">
-        <button onclick="window.location.href='login.html'">Login</button>
-        <button class="signup" onclick="window.location.href='signup.html'">Sign Up</button>
+  <!-- ====== Nav ====== -->
+  <header class="nav" aria-label="Main Navigation">
+    <div class="container nav-inner">
+      <a class="brand" href="#home" aria-label="Whisprly Home">
+        <img src="logo.png" alt="Whisprly logo" width="36" height="36" />
+        <span>Whisprly</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#download">Download</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn ghost" href="/login" aria-label="Log in">Log in</a>
+        <a class="btn primary" href="/signup" aria-label="Sign up">Sign up</a>
+        <button class="hamburger" aria-label="Open menu" id="menuBtn">☰</button>
       </div>
     </div>
-  </main>
-  <script>
-    // Animated typing effect
-    const TEXTS = [
-      "Welcome to Whisprly.",
-      "Your Social World. ",
-      "Follow. Post. Connect."
-    ];
-    let txtIdx = 0, char = 0, typingDiv = document.getElementById('typewriter');
+  </header>
 
-    function typeText() {
-      if(!typingDiv) return;
-      typingDiv.textContent = TEXTS[txtIdx].slice(0, char++);
-      if (char <= TEXTS[txtIdx].length) {
-        setTimeout(typeText, 55);
-      } else {
-        setTimeout(() => {
-          char = 0; txtIdx = (txtIdx + 1) % TEXTS.length;
-          typeText();
-        }, 1200);
-      }
-    }
-    typeText();
+  <!-- ====== Hero ====== -->
+  <main id="home" class="container">
+    <section class="hero">
+      <div>
+        <span class="badge">New • Private by design</span>
+        <h1>Speak freely, connect safely.<br/>Meet <span style="background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">Whisprly</span>.</h1>
+        <p>Real talk without the noise. Share moments, join communities, and chat in real time—on your terms. Minimal tracking, strong controls, and beautifully fast.</p>
+        <div class="actions">
+          <a class="btn primary" href="#download">Download App</a>
+          <a class="btn" href="/web" rel="noopener">Open on Web</a>
+          <a class="btn ghost" href="#features">Explore Features</a>
+        </div>
+        <p class="muted" style="margin-top:10px">Available soon on Android & iOS.</p>
+      </div>
+      <div class="hero-visual">
+        <img class="logo-hero" src="logo.png" width="88" height="88" alt="Whisprly app icon" loading="eager" />
+        <div class="card" style="margin-top:16px; padding:18px">
+          <p class="mb-0">“Finally, a social app that feels calm and in control.”</p>
+          <p class="muted mt-0" style="font-size:.95rem">— Early beta tester</p>
+        </div>
+        <div class="card" style="margin-top:12px; padding:18px">
+          <ul style="margin:0; padding-left:18px; line-height:1.6">
+            <li>No-nonsense feed with posts, comments & likes</li>
+            <li>Fast DMs and group chats</li>
+            <li>Powerful report & block controls</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====== Features ====== -->
+  <section id="features" class="section">
+    <div class="container">
+      <h2 class="center">Why you'll love Whisprly</h2>
+      <p class="center muted">Designed to be simple, safe, and speedy—so your voice is the main event.</p>
+      <div class="grid feature-grid" style="margin-top:22px">
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">💬</div>
+          <div>
+            <h3 class="mt-0">Clean, calm feed</h3>
+            <p class="muted">Posts with images, comments, replies, and likes—organized without distractions.</p>
+          </div>
+        </article>
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">⚡</div>
+          <div>
+            <h3 class="mt-0">Fast chats</h3>
+            <p class="muted">One‑to‑one and group DMs with typing indicators, read status, and media.</p>
+          </div>
+        </article>
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">🛡️</div>
+          <div>
+            <h3 class="mt-0">Safety first</h3>
+            <p class="muted">Report & block tools, community guidelines, and transparent policies.</p>
+          </div>
+        </article>
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">🔔</div>
+          <div>
+            <h3 class="mt-0">Smart notifications</h3>
+            <p class="muted">Get alerts that matter. Snooze the rest. Your time, your rules.</p>
+          </div>
+        </article>
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">🔒</div>
+          <div>
+            <h3 class="mt-0">Privacy by design</h3>
+            <p class="muted">Minimal data collection and clear controls for who sees what.</p>
+          </div>
+        </article>
+        <article class="card feature">
+          <div class="feature-icon" aria-hidden="true">🚀</div>
+          <div>
+            <h3 class="mt-0">Built to scale</h3>
+            <p class="muted">Modern tech under the hood for speed and reliability.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== How it Works ====== -->
+  <section id="how" class="section">
+    <div class="container grid" style="grid-template-columns:1fr 1fr">
+      <div>
+        <h2>How it works</h2>
+        <ol class="muted" style="line-height:1.9">
+          <li><strong>Sign up</strong> in seconds with email or continue as anonymous.</li>
+          <li><strong>Create your profile</strong> and follow people you like.</li>
+          <li><strong>Post & chat</strong>—share photos, comment, reply, and DM.</li>
+          <li><strong>Stay in control</strong> with report/block and notification settings.</li>
+        </ol>
+        <div class="actions">
+          <a class="btn primary" href="/signup">Get Started</a>
+          <a class="btn" href="#download">Get the app</a>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="padding:18px">
+          <h3 class="mt-0">Coming soon</h3>
+          <ul class="muted" style="margin-top:10px; line-height:1.8">
+            <li>Verified badges</li>
+            <li>Comment likes & threaded replies</li>
+            <li>Community-led moderation tools</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Download ====== -->
+  <section id="download" class="section">
+    <div class="container">
+      <h2 class="center">Download Whisprly</h2>
+      <p class="center muted">We’ll drop links here once the apps are live. For now, try the web.</p>
+      <div class="center" style="margin:16px 0 24px">
+        <a class="btn primary" href="/web">Open Whisprly Web</a>
+      </div>
+      <div class="store-badges center" style="justify-content:center">
+        <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.whisprly.app" rel="noopener" aria-label="Get it on Google Play">
+          <img src="/icons/playstore.svg" alt="Google Play" /> Google Play
+        </a>
+        <a class="store-badge" href="https://apps.apple.com/app/id0000000000" rel="noopener" aria-label="Download on the App Store">
+          <img src="/icons/appstore.svg" alt="App Store" /> App Store
+        </a>
+        <a class="store-badge" href="/apk/whisprly-latest.apk" aria-label="Download APK">
+          <img src="/icons/apk.svg" alt="APK" /> Download APK
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FAQ ====== -->
+  <section id="faq" class="section">
+    <div class="container">
+      <h2 class="center">FAQ</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <details class="card" style="padding:16px"><summary><strong>Is Whisprly free?</strong></summary><p class="muted">Yes. We may offer optional extras later.</p></details>
+        <details class="card" style="padding:16px"><summary><strong>Do you sell my data?</strong></summary><p class="muted">No. We keep data minimal and transparent.</p></details>
+        <details class="card" style="padding:16px"><summary><strong>Is there a web version?</strong></summary><p class="muted">Yes, open the web app from the Download section.</p></details>
+        <details class="card" style="padding:16px"><summary><strong>How do I report or block?</strong></summary><p class="muted">Open a profile or post, tap the ••• menu, then choose Report or Block.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Footer ====== -->
+  <footer>
+    <div class="container grid footer-grid">
+      <div>
+        <div class="brand"><img src="logo.png" alt="Whisprly logo" /> <span>Whisprly</span></div>
+        <p class="muted">© <span id="year"></span> Whisprly. All rights reserved.</p>
+      </div>
+      <div class="footer-col">
+        <h4 class="mt-0">Company</h4>
+        <a href="/about">About</a>
+        <a href="/careers">Careers</a>
+        <a href="/press">Press</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4 class="mt-0">Legal</h4>
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/community-guidelines.html">Community Guidelines</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/licenses.html">Licenses</a>
+      </div>
+      <div class="footer-col">
+        <h4 class="mt-0">Follow</h4>
+        <a href="https://instagram.com/whisprly" rel="noopener">Instagram</a>
+        <a href="https://x.com/whisprly" rel="noopener">X / Twitter</a>
+        <a href="https://facebook.com/whisprly" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====== Minimal JS ====== -->
+  <script>
+    // Mobile menu toggle
+    const header = document.querySelector('.nav');
+    document.getElementById('menuBtn').addEventListener('click', ()=>{
+      header.classList.toggle('open');
+    });
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+      });
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Whisprly - Copyright Infringement Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      color: #222;
+    }
+    h1 {
+      text-align: center; margin-bottom: 1rem;
+      color: #0F0418;
+    }
+    form {
+      display: flex; flex-direction: column;
+      gap: 1rem;
+      background: #f9f9f9; padding: 1.5rem; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: 600;
+    }
+    input, textarea {
+      font-size: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      resize: vertical;
+    }
+    input[type="submit"] {
+      background: #7c3aed;
+      color: white;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    input[type="submit"]:hover {
+      background: #5a27b7;
+    }
+    .confirmation {
+      text-align: center;
+      color: #10b981;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .error {
+      color: #f44336;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    /* Honeypot - hidden field */
+    .hidden-field {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      height: 0; width: 0; overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <h1>Copyright Infringement Report Form</h1>
+  <form id="copyrightForm" novalidate>
+    <!-- Complainant Info -->
+    <label for="name">Full Name *</label>
+    <input id="name" name="name" type="text" required placeholder="Your full name" />
+
+    <label for="email">Contact Email *</label>
+    <input id="email" name="email" type="email" required placeholder="your.email@example.com" />
+
+    <label for="company">Company/Organization</label>
+    <input id="company" name="company" type="text" placeholder="If applicable" />
+
+    <label for="phone">Phone Number</label>
+    <input id="phone" name="phone" type="tel" placeholder="Optional" />
+
+    <!-- Copyrighted Work -->
+    <label for="workTitle">Title or Description of Copyrighted Work *</label>
+    <input id="workTitle" name="workTitle" type="text" required placeholder="Title or description" />
+
+    <label for="regNumber">Copyright Registration Number</label>
+    <input id="regNumber" name="regNumber" type="text" placeholder="If applicable" />
+
+    <label for="regCountry">Copyright Registration Country</label>
+    <input id="regCountry" name="regCountry" type="text" placeholder="If applicable" />
+
+    <!-- Infringement Details -->
+    <label for="infringementUrl">Location(s) of Infringing Content (URLs) *</label>
+    <textarea id="infringementUrl" name="infringementUrl" rows="3" required placeholder="Paste all URLs here"></textarea>
+
+    <label for="description">Description of Infringement *</label>
+    <textarea id="description" name="description" rows="4" required placeholder="Explain how it infringes"></textarea>
+
+    <label for="discoveryDate">Date You Discovered Infringement</label>
+    <input id="discoveryDate" name="discoveryDate" type="date" />
+
+    <!-- Declaration -->
+    <label>
+      <input type="checkbox" id="declaration" name="declaration" required />
+      I have a good faith belief that the reported content is infringing and the information in this form is accurate.
+    </label>
+
+    <!-- Honeypot for spam -->
+    <input type="text" name="hp_field" class="hidden-field" tabindex="-1" autocomplete="off" />
+
+    <input type="submit" value="Submit Report" />
+  </form>
+
+  <div class="confirmation" id="confirmationMsg" style="display:none;">
+    Thank you! Your report has been submitted and will be reviewed promptly.
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // TODO: Replace with your Firebase project config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MSG_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const form = document.getElementById("copyrightForm");
+    const confirmationMsg = document.getElementById("confirmationMsg");
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      // Simple honeypot check
+      if(form.hp_field.value) return; // likely spam
+
+      // Validate form
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+
+      // Collect values
+      const data = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        company: form.company.value.trim(),
+        phone: form.phone.value.trim(),
+        workTitle: form.workTitle.value.trim(),
+        regNumber: form.regNumber.value.trim(),
+        regCountry: form.regCountry.value.trim(),
+        infringementUrl: form.infringementUrl.value.trim(),
+        description: form.description.value.trim(),
+        discoveryDate: form.discoveryDate.value,
+        declaration: form.declaration.checked,
+        submittedAt: new Date().toISOString()
+      };
+
+      // Push data to Realtime DB under "supportform"
+      db.ref('supportform').push(data)
+        .then(() => {
+          form.reset();
+          confirmationMsg.style.display = "block";
+          setTimeout(() => confirmationMsg.style.display = "none", 7000);
+        })
+        .catch(error => {
+          alert("There was an error submitting your report. Please try again later.");
+          console.error(error);
+        });
+    });
+  </script>
+</body>
+</html>

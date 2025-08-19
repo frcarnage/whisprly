@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whisprly – Login</title>
   <style>
-    /* (your styles unchanged) */
+    /* Your original CSS unchanged */
     :root {
       --primary: #005cff;
       --accent: #28eca3;
@@ -62,16 +62,13 @@
     <div class="blob blob2"></div>
     <div class="blob blob3"></div>
   </div>
-
   <header class="header">
     <a href="index.html" class="btn" aria-label="Back to home"><i class="fas fa-chevron-left"></i> Back</a>
   </header>
-
   <main>
     <section class="auth-container" role="main" aria-labelledby="login-title">
       <img src="logo.png" alt="Whisprly Logo" class="logo-anim" />
       <h2 id="login-title">Login to Whisprly</h2>
-
       <form id="loginForm" aria-describedby="loginError" novalidate autocomplete="on">
         <div class="input-group">
           <input type="email" id="loginEmail" name="email" placeholder="Email" required autocomplete="email" aria-required="true" aria-label="Email"/>
@@ -88,12 +85,10 @@
           <span id="login-spinner" style="display:none; margin-left:13px"><i class="fa fa-spinner fa-spin"></i></span>
         </button>
       </form>
-
       <p class="sign-up-text">
         Don’t have an account? <a href="signup.html">Sign up</a> &nbsp;•&nbsp;
         <a href="forgot.html">Forgot password?</a>
       </p>
-
       <p id="loginError" class="error-text" role="alert" aria-live="assertive"></p>
     </section>
   </main>
@@ -112,72 +107,11 @@
     }
   </script>
 
-  <!-- Firebase compat CDN (loads global `firebase`) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+  <!-- Remove compat scripts; use your modular config only -->
 
-  <!-- App logic using ES modules (same folder paths) -->
-  <script type="module">
-    import { onAuth, loginWithEmail } from './auth.js';
-
-    const form = document.getElementById('loginForm');
-    const emailEl = document.getElementById('loginEmail');
-    const passEl = document.getElementById('loginPassword');
-    const errorEl = document.getElementById('loginError');
-    const btnText = document.getElementById('login-btn-text');
-    const spinner = document.getElementById('login-spinner');
-    const submitBtn = form.querySelector('button[type="submit"]');
-
-    const redirectToHome = () => { window.location.href = 'home.html'; };
-
-    // If already signed-in, go straight to home
-    onAuth(user => { if (user) redirectToHome(); });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.textContent = '';
-
-      const email = emailEl.value.trim();
-      const password = passEl.value;
-
-      if (!email || !password) {
-        errorEl.textContent = 'Please enter email and password.';
-        return;
-      }
-
-      setLoading(true);
-      try {
-        await loginWithEmail(email, password);
-        // onAuth listener will redirect, but keep a fallback:
-        redirectToHome();
-      } catch (err) {
-        errorEl.textContent = mapAuthError(err);
-      } finally {
-        setLoading(false);
-      }
-    });
-
-    function setLoading(state) {
-      submitBtn.disabled = state;
-      submitBtn.setAttribute('aria-busy', String(state));
-      spinner.style.display = state ? 'inline-block' : 'none';
-      btnText.textContent = state ? 'Logging in…' : 'Login';
-    }
-
-    function mapAuthError(err) {
-      const code = err?.code || '';
-      switch (code) {
-        case 'auth/invalid-email': return 'Please enter a valid email address.';
-        case 'auth/user-disabled': return 'This account has been disabled.';
-        case 'auth/user-not-found': return 'No account found with this email.';
-        case 'auth/wrong-password': return 'Incorrect password. Try again.';
-        case 'auth/too-many-requests': return 'Too many attempts. Please try again later.';
-        default: return err?.message || 'Login failed. Please try again.';
-      }
-    }
-  </script>
-
-  <!-- Initialize Firebase app (module imports read this) -->
+  <!-- Load your modular firebase-config and auth scripts -->
   <script type="module" src="./firebase-config.js"></script>
+  <script type="module" src="./auth.js"></script>
+
 </body>
 </html>

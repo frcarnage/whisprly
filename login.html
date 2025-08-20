@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Whisprly – Login</title>
   <style>
-    /* Your original CSS unchanged */
     :root {
       --primary: #005cff;
       --accent: #28eca3;
@@ -15,44 +14,120 @@
       --input-bg: #f3f7ff;
       --error: #ff2e4c;
       --radius: 16px;
-      --shadow: 0 10px 38px #26387825,0 1.5px 5px #005cff18;
+      --shadow: 0 10px 38px #26387825, 0 1.5px 5px #005cff18;
       --font-main: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-    html,body { margin:0; padding:0; height:100%; min-height:100vh; font-family:var(--font-main); background:linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 100%); overflow-x:hidden; }
+
+    html,body {
+      margin:0; padding:0; height:100%; min-height:100vh;
+      font-family:var(--font-main);
+      background:linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+
+    /* Background blobs */
     .bg-anim{ position:fixed; z-index:0; top:0; left:0; width:100vw; height:100vh; overflow:hidden; pointer-events:none; }
-    .blob{ position:absolute; border-radius:45% 55% 56% 44% / 47% 45% 55% 53%; opacity:.44; filter:blur(0px); animation:blobMove 18s infinite alternate; will-change:transform; mix-blend-mode:lighten; }
-    .blob1{ width:430px; height:400px; background:#47e6b6; left:-120px; top:12vh; filter:blur(50px); opacity:.31; animation-delay:0s; }
-    .blob2{ width:420px; height:370px; background:#689dff; left:60vw; top:-110px; filter:blur(42px); animation-delay:4s; }
-    .blob3{ width:370px; height:330px; background:#ffbfea; left:46vw; top:65vh; filter:blur(62px); opacity:.20; animation-delay:7.2s; }
-    @keyframes blobMove{0%{transform:scale(1) translateY(0) translateX(0) rotate(0)}33%{transform:scale(1.09) translateY(26px) translateX(-30px) rotate(10deg)}60%{transform:scale(.94) translateY(-30px) translateX(20px) rotate(-8deg)}100%{transform:scale(1.05) translateY(12px) translateX(40px) rotate(5deg)}}
-    .header{ position:fixed; top:30px; left:32px; z-index:2; mix-blend-mode:normal; }
-    .header .btn{ font-size:1.01rem; color:var(--primary); background:var(--light); border:none; cursor:pointer; text-decoration:none; font-weight:600; padding:10px 18px; border-radius:42px; transition:background .22s, box-shadow .23s, color .2s; box-shadow:0 3px 17px #005cff28; display:inline-flex; align-items:center; gap:6px; border:1.3px solid #e0e5fc; }
-    .header .btn:hover{ background:var(--primary); color:#fff; box-shadow:0 7px 22px #005cff55; }
-    main{ display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; z-index:1; position:relative; }
-    .auth-container{ margin:36px 0; background:rgba(255,255,255,.93); width:100%; max-width:420px; padding:50px 38px 38px; border-radius:28px; box-shadow:var(--shadow); text-align:center; position:relative; z-index:2; animation:popIn .8s cubic-bezier(.28,1.3,.68,1); }
+    .blob{ position:absolute; border-radius:45%/50%; opacity:.35; animation:blobMove 18s infinite alternate; will-change:transform; mix-blend-mode:lighten; filter:blur(50px);}
+    .blob1{ width:430px; height:400px; background:#47e6b6; left:-120px; top:12vh; animation-delay:0s;}
+    .blob2{ width:420px; height:370px; background:#689dff; left:60vw; top:-110px; animation-delay:4s;}
+    .blob3{ width:370px; height:330px; background:#ffbfea; left:46vw; top:65vh; animation-delay:7.2s;}
+    @keyframes blobMove{
+      0%{transform:scale(1) translate(0,0)}
+      33%{transform:scale(1.1) translate(-30px,26px)}
+      60%{transform:scale(.94) translate(20px,-30px)}
+      100%{transform:scale(1.05) translate(40px,12px)}
+    }
+
+    /* Header */
+    .header{ position:fixed; top:30px; left:32px; z-index:2; }
+    .header .btn{
+      font-size:1rem; color:var(--primary); background:var(--light);
+      border:1.3px solid #e0e5fc; padding:10px 18px; border-radius:42px;
+      font-weight:600; display:inline-flex; align-items:center; gap:6px;
+      cursor:pointer; text-decoration:none;
+      transition:all .22s; box-shadow:0 3px 17px #005cff28;
+    }
+    .header .btn:hover{ background:var(--primary); color:#fff; box-shadow:0 6px 20px #005cff55; }
+
+    /* Center container */
+    main{ display:flex; justify-content:center; align-items:center; min-height:100vh; z-index:1; position:relative; }
+
+    /* Auth Card (Glassmorphic) */
+    .auth-container{
+      margin:36px 0; width:100%; max-width:420px; padding:50px 38px 38px;
+      border-radius:28px; text-align:center; position:relative; z-index:2;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid rgba(190,210,255,0.35);
+      box-shadow:var(--shadow);
+      animation:popIn .8s cubic-bezier(.28,1.3,.68,1);
+      transition: transform .28s ease, box-shadow .28s ease;
+    }
+    .auth-container.error-shake { animation:shake 0.4s; }
     @keyframes popIn{from{transform:translateY(60px) scale(.9); opacity:0}to{transform:translateY(0) scale(1); opacity:1}}
+    @keyframes shake{
+      0%,100%{transform:translateX(0)}
+      25%{transform:translateX(-8px)}
+      50%{transform:translateX(8px)}
+      75%{transform:translateX(-6px)}
+    }
+
     .logo-anim{ width:86px; margin-bottom:19px; border-radius:17px; background:#f7f7fc; box-shadow:0 7px 24px #005cff39; animation:rotateLogo 3s infinite linear; display:inline-block; }
     @keyframes rotateLogo{0%{transform:rotate(-6deg)}80%{transform:rotate(6deg)}100%{transform:rotate(-6deg)}}
-    h2{ margin-bottom:28px; font-weight:900; font-size:2.12rem; color:var(--primary); letter-spacing:1px; text-shadow:2px 6px 30px #0064ff2c; animation:fadeIn 1.1s linear; }
+    h2{ margin-bottom:28px; font-weight:900; font-size:2.1rem; color:var(--primary); text-shadow:2px 6px 30px #0064ff2c; animation:fadeIn 1s linear; }
     @keyframes fadeIn{from{opacity:0; filter:blur(7px)}to{opacity:1; filter:blur(0)}}
+
+    /* Form */
     form{ display:flex; flex-direction:column; gap:23px; align-items:stretch; }
-    .input-group{ position:relative; display:flex; align-items:center; }
-    .input-group input{ flex:1; padding:15px 48px 15px 18px; font-size:1.06rem; border:1.75px solid #c8d5ea; border-radius:11px; background:var(--input-bg); color:#233657; font-weight:500; transition:border-color .18s; outline:none; }
-    .input-group input:focus{ border-color:var(--primary); background:#eef7ff; }
-    .input-group .icon{ position:absolute; right:15px; font-size:1.21rem; color:#b6c8e1; transition:color .18s; }
+    .input-group{ position:relative; display:flex; align-items:center; opacity:0; transform:translateY(15px); animation:fadeUp .45s ease forwards;}
+    .input-group:nth-child(1){ animation-delay:.2s;} .input-group:nth-child(2){ animation-delay:.4s;}
+    @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
+
+    .input-group input{
+      flex:1; padding:15px 48px 15px 18px; font-size:1.05rem;
+      border:1.7px solid #c8d5ea; border-radius:11px;
+      background:var(--input-bg); color:#233657; font-weight:500;
+      transition:border-color .18s, box-shadow .2s, background .2s;
+      outline:none;
+    }
+    .input-group input:focus{
+      border-color:var(--accent); background:#eefeff;
+      box-shadow:0 0 0 4px rgba(40,236,163,.15);
+    }
+    .input-group .icon{ position:absolute; right:15px; font-size:1.2rem; color:#b6c8e1; transition:color .2s; }
     .input-group input:focus + .icon{ color:var(--primary); }
-    button.btn-primary{ background:var(--primary); padding:15px 0; color:#fff; font-weight:800; font-size:1.19rem; border:none; border-radius:14px; margin-top:8px; cursor:pointer; transition:background .23s, box-shadow .23s, transform .13s; box-shadow:0 6px 17px #005cff45; letter-spacing:.7px; animation:popBtn .8s .22s cubic-bezier(.5,1.4,.77,1.22) 1; }
+
+    /* Password eye toggle */
+    .eye-toggle{ position:absolute; right:15px; font-size:1.2rem; background:none; border:none; color:#b6c8e1; cursor:pointer; transition:color .2s, transform .2s, opacity .2s; display:flex; align-items:center; }
+    .eye-toggle.active{ color:var(--primary); transform:rotate(180deg); }
+
+    /* Button */
+    button.btn-primary{
+      background:var(--primary); padding:15px 0; color:#fff;
+      font-weight:800; font-size:1.18rem; border:none; border-radius:14px;
+      margin-top:8px; cursor:pointer; letter-spacing:.7px;
+      transition:all .23s; box-shadow:0 6px 17px #005cff45;
+      animation:popBtn .8s .22s cubic-bezier(.5,1.4,.77,1.22);
+    }
     @keyframes popBtn{from{transform:scale(.94)}to{transform:scale(1)}}
-    button.btn-primary:hover{ background:#23cd92; color:var(--bg1); box-shadow:0 8px 29px #23cd92aa; transform:scale(1.035); }
-    .sign-up-text{ margin-top:23px; font-size:1.08rem; color:#2f4562; font-weight:500; letter-spacing:.1px; animation:fadeIn 1.4s .4s linear; }
-    .sign-up-text a{ color:var(--primary); font-weight:700; text-decoration:none; transition:color .18s; margin-left:4px; }
+    button.btn-primary:hover{ background:#23cd92; box-shadow:0 8px 24px #23cd92aa; transform:scale(1.035);}
+    button.btn-primary[disabled]{ opacity:.7; cursor:not-allowed; transform:scale(.97); }
+
+    /* Footer text */
+    .sign-up-text{ margin-top:23px; font-size:1.05rem; color:#2f4562; font-weight:500; }
+    .sign-up-text a{ color:var(--primary); font-weight:700; text-decoration:none; transition:color .2s; }
     .sign-up-text a:hover{ color:#23cd92; text-decoration:underline; }
-    .error-text{ margin-top:18px; min-height:22px; color:var(--error); font-weight:700; font-size:1rem; letter-spacing:.06em; user-select:none; transition:opacity .22s; opacity:1; animation:fadeIn 1.1s; }
-    .error-text.fade{ opacity:.3; }
-    .eye-toggle{ position:absolute; right:15px; font-size:1.2rem; background:none; border:none; color:#b6c8e1; cursor:pointer; transition:color .18s, transform .12s; padding:0; display:flex; align-items:center; }
-    .eye-toggle:active{ color:var(--primary); transform:scale(1.14); }
-    @media (max-width:480px){ .auth-container{ padding:33px 8vw 23px; margin-top:11vw; border-radius:17px; } h2{ font-size:1.37rem } .logo-anim{ width:60px } .header{ top:11px; left:8px } }
+
+    /* Error text */
+    .error-text{ margin-top:18px; min-height:22px; color:var(--error); font-weight:700; font-size:1rem; letter-spacing:.05em; opacity:1; }
+
+    @media (max-width:480px){
+      .auth-container{ padding:32px 7vw 24px; border-radius:18px; }
+      h2{ font-size:1.4rem; }
+      .logo-anim{ width:65px; }
+      .header{ top:12px; left:8px; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -62,9 +137,11 @@
     <div class="blob blob2"></div>
     <div class="blob blob3"></div>
   </div>
+
   <header class="header">
     <a href="index.html" class="btn" aria-label="Back to home"><i class="fas fa-chevron-left"></i> Back</a>
   </header>
+
   <main>
     <section class="auth-container" role="main" aria-labelledby="login-title">
       <img src="logo.png" alt="Whisprly Logo" class="logo-anim" />
@@ -76,11 +153,11 @@
         </div>
         <div class="input-group">
           <input type="password" id="loginPassword" name="password" placeholder="Password" required autocomplete="current-password" aria-required="true" aria-label="Password"/>
-          <button type="button" class="eye-toggle" tabindex="-1" aria-label="Show password" onclick="togglePassword()">
+          <button type="button" class="eye-toggle" tabindex="-1" aria-label="Show/Hide password" onclick="togglePassword()">
             <i id="eyeIcon" class="fas fa-eye"></i>
           </button>
         </div>
-        <button type="submit" class="btn btn-primary" aria-live="polite" aria-busy="false">
+        <button type="submit" class="btn btn-primary">
           <span id="login-btn-text">Login</span>
           <span id="login-spinner" style="display:none; margin-left:13px"><i class="fa fa-spinner fa-spin"></i></span>
         </button>
@@ -94,24 +171,55 @@
   </main>
 
   <script>
+    // Eye toggle
     function togglePassword() {
       const input = document.getElementById('loginPassword');
+      const button = document.querySelector('.eye-toggle');
       const icon = document.getElementById('eyeIcon');
       if (input.type === 'password') {
         input.type = 'text';
         icon.className = 'fas fa-eye-slash';
+        button.classList.add('active');
       } else {
         input.type = 'password';
         icon.className = 'fas fa-eye';
+        button.classList.remove('active');
       }
+    }
+
+    // Form submit UI feedback
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const btn = document.querySelector(".btn-primary");
+      const spinner = document.getElementById("login-spinner");
+      const btnText = document.getElementById("login-btn-text");
+      const container = document.querySelector(".auth-container");
+
+      btn.disabled = true;
+      btnText.textContent = "Logging in...";
+      spinner.style.display = "inline-block";
+
+      // Simulate async login
+      setTimeout(() => {
+        btn.disabled = false;
+        btnText.textContent = "Login";
+        spinner.style.display = "none";
+        showError("Invalid email or password");
+        container.classList.add("error-shake");
+        setTimeout(()=> container.classList.remove("error-shake"), 500);
+      }, 1500);
+    });
+
+    function showError(message){
+      const errorText = document.getElementById("loginError");
+      errorText.textContent = message;
+      errorText.setAttribute("aria-invalid","true");
     }
   </script>
 
-  <!-- Remove compat scripts; use your modular config only -->
-
-  <!-- Load your modular firebase-config and auth scripts -->
+  <!-- Firestore modular config -->
   <script type="module" src="./firebase-config.js"></script>
   <script type="module" src="./auth.js"></script>
-
 </body>
 </html>
